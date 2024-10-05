@@ -1,8 +1,8 @@
-const { User, Client } = require('../data');  // Importar los modelos
+const { Comercio, Client } = require('../data');  // Importar los modelos
 
 exports.registerClient = async (req, res) => {
   const { name, email, phone } = req.body;
-  const userId = req.userId;  // <-- Cambia esto para usar req.userId
+  const comercioId = req.comercioId; 
 
   try {
     // Buscar si el cliente ya existe en la base de datos
@@ -14,20 +14,20 @@ exports.registerClient = async (req, res) => {
     }
 
     // Verificar si este comercio ya está asociado con el cliente
-    const user = await User.findByPk(userId);
+    const comercio = await Comercio.findByPk(comercioId);
 
-    if (!user) {
+    if (!comercio) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    const alreadyAssociated = await user.hasClient(client);
+    const alreadyAssociated = await comercio.hasClient(client);
 
     if (alreadyAssociated) {
       return res.status(400).json({ message: 'Este cliente ya está registrado en su comercio' });
     }
 
     // Asociar el cliente con el comercio (User)
-    await user.addClient(client);
+    await comercio.addClient(client);
 
     res.status(201).json({ message: 'Cliente registrado exitosamente', client });
   } catch (error) {

@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {User} = require('../data');  // Modelo de administrador
+const {Comercio} = require('../data');  // Modelo de administrador
 require('dotenv').config();  // Para usar las variables de entorno
 
 // Registrar un administrador
@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
       console.log('Contraseña hasheada:', hashedPassword);
   
       // Crear el nuevo administrador en la base de datos
-      const newAdmin = await User.create({ name, email, role, password: hashedPassword });
+      const newAdmin = await Comercio.create({ name, email, role, password: hashedPassword });
       console.log('Admin creado:', newAdmin);
   
       res.status(201).json({ message: 'Admin registrado con éxito', admin: newAdmin });
@@ -30,21 +30,34 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const admin = await User.findOne({ where: { email } });
+    // Buscar el usuario en la base de datos por email
+    const admin = await Comercio.findOne({ where: { email } });
     if (!admin) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
+    // Comparar la contraseña
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
-    // Crear el token JWT
-    const token = jwt.sign({ id: admin.id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+    // Crear el token JWT, incluyendo el id y el rol en el token
+    const token = jwt.sign({ id: admin.id, role: admin.role }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
 
-    res.status(200).json({ message: 'Inicio de sesión exitoso', token });
+    // Enviar información adicional junto con el token
+    res.status(200).json({
+      message: 'Inicio de sesión exitoso',
+      token,
+      user: {
+        id: admin.id,        // ID del usuario
+        name: admin.name,    // Nombre del usuario
+        email: admin.email,  // Email del usuario
+        role: admin.role,    // Rol del usuario (Admin, User, etc.)
+      },
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Error en el inicio de sesión', error });
+    console.error('Error en el inicio de sesión:', error);  // Log del error en la consola
+    res.status(500).json({ message: 'Error en el inicio de sesión', error: error.message });
   }
 };

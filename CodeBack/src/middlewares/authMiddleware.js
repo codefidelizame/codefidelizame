@@ -13,7 +13,7 @@ const authMiddleware = (req, res, next) => {
     const verified = jwt.verify(token.split(' ')[1], process.env.JWT_SECRET_KEY);
 
     // Asignar el userId al request
-    req.userId = verified.id;  // Asegúrate de que "id" es el campo correcto
+    req.comercioId = verified.id;  // Asegúrate de que "id" es el campo correcto
     
     next();
   } catch (error) {

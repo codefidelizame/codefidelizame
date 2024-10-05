@@ -1,14 +1,24 @@
 const express = require('express');
 const router = express.Router();
-// const clientController = require('../controllers/registerClient');
-// const allClientController = require('../controllers/allClientController')
-const servicesController = require('../controllers/registerService')
+const servicesController = require('../controllers/serviceControllers/registerService')
+const getAllService = require('../controllers/serviceControllers/getAllServices');
+const getServicesByClient = require('../controllers/serviceControllers/getServicesByClient');
+
 const authMiddleware = require('../middlewares/authMiddleware');
 
 // Ruta para crear un nuevo contacto
 router.post('/',authMiddleware, servicesController.registerServiceForClient);
 
-// Ruta para obtener todos los clientes (opcional)
-//router.get('/',authMiddleware, allClientController.getAllClients);
+// Ruta para obtener todos los Servicios 
+router.get('/', authMiddleware, getAllService.getAllServices);
+
+// Ruta para obtener servicios por cliente (GET request)
+router.get('/client/:clientId', authMiddleware, getServicesByClient.getServicesByClient);
+
+// // Ruta para obtener todos los Servicios 
+// router.get('/',authMiddleware, servicesController.getAllService);
+
+// Ruta para obtener servicios por cliente (GET request)
+// router.get('/client/:clientId',authMiddleware, servicesControllergetServicesByClient);
 
 module.exports = router;

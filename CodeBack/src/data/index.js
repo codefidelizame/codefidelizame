@@ -51,11 +51,17 @@ sequelize.models = Object.fromEntries(capsEntries);
 
 // En sequelize.models están todos los modelos importados como propiedades
 // Para relacionarlos hacemos un destructuring
-const { Client, User, Service, Receipt } = sequelize.models;
+const { Client, Comercio, Service, Receipt, ClientComercio } = sequelize.models;
 
-// Relación: Muchos a Muchos entre User y Client
-User.belongsToMany(Client, { through: 'UserClient' });
-Client.belongsToMany(User, { through: 'UserClient' });
+
+
+// Relación: Muchos a Muchos entre Comercio y Client
+Comercio.belongsToMany(Client, { through: 'ClientComercio' });
+Client.belongsToMany(Comercio, { through: 'ClientComercio' });
+
+//cada servicio vendido pertenece a un comercio
+Comercio.hasMany(Service, { foreignKey: 'comercioId' });
+Service.belongsTo(Comercio, { foreignKey: 'comercioId' });
 
 
 // Relación: Un Cliente puede comprar varios Servicios
