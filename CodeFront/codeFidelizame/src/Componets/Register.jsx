@@ -36,11 +36,13 @@ const Register = () => {
     <div className="flex flex-col min-h-screen bg-gray-400">
       {/* Navbar que ocupa todo el ancho de la pantalla */}
       <div className="flex justify-between items-center p-4 bg-white shadow-md">
-        {/* Logo */}
-        <img src={Logo} alt="Logo" className="h-12 rounded-full" />
-
-        {/* Botón Volver */}
-        <Link to="/panel" className="text-gray-200 font-nunito  bg-blue-500 py-2 px-4 rounded-lg">
+      <nav className="w-full flex justify-start items-center py-4 px-8 bg-transparent">
+        <Link to="/landing" className="text-white text-xl font-bold cursor-pointer flex items-center">
+          <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
+          
+        </Link>
+      </nav>
+        <Link to="/panel" className="text-gray-200 font-nunito  bg-blue-500 py-2 px-4 rounded-lg mr-8">
           PANEL
         </Link>
 

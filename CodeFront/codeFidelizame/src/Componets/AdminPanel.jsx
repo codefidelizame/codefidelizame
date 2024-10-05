@@ -27,10 +27,12 @@ const AdminPanel = () => {
       
       {/* Navbar que ocupa todo el ancho de la pantalla */}
       <div className="relative w-full flex justify-between items-center p-4 mr-6 ml-6">
-        {/* Logo */}
-        <img src={Logo} alt="Logo" className="h-14 rounded-full" /> {/* Ajusta el tamaño del logo según sea necesario */}
-
-        {/* Botón de Logout */}
+      <nav className="w-full flex justify-start items-center py-4 px-8 bg-transparent">
+        <Link to="/landing" className="text-white text-xl font-bold cursor-pointer flex items-center">
+          <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
+          
+        </Link>
+      </nav>
         <button onClick={handleLogout} className="text-gray-700 hover:text-red-500">
           <FaSignOutAlt className="h-6 w-6" />
         </button>
