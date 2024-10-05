@@ -27,7 +27,7 @@ const Register = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 ">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold mb-4">Registro</h2>
+        <h2 className="text-2xl font-bold mb-4">Registro de Nuevo Comercio</h2>
         {error && <div className="text-red-500 mb-4">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -72,7 +72,7 @@ const Register = () => {
               className="border border-gray-300 rounded-lg p-2 w-full"
             >
               <option value="comercio">Comercio</option>
-              <option value="cliente">Cliente</option>
+              
             </select>
           </div>
           <button

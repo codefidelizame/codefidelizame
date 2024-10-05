@@ -19,9 +19,12 @@ import {
   FETCH_ALL_SERVICES_REQUEST,
   FETCH_ALL_SERVICES_SUCCESS,
   FETCH_ALL_SERVICES_FAILURE,
+  REGISTER_CLIENT_REQUEST,
+  REGISTER_CLIENT_SUCCESS,
+  REGISTER_CLIENT_FAILURE
 } from './actions-type';
 
-// Acción para registrar un nuevo usuario/admin
+// Acción para registrar un nuevo Comercio
 export const register = (userData) => async (dispatch) => {
   dispatch({ type: REGISTER_REQUEST });
 
@@ -136,3 +139,33 @@ export const fetchAllServices = () => async (dispatch) => {
     });
   }
 };
+
+export const registerClient = (clientData) => async (dispatch, getState) => {
+  dispatch({ type: REGISTER_CLIENT_REQUEST });
+
+  // Obtener el token del estado
+  const state = getState();
+  const token = state.token; // Asegúrate de que aquí estás accediendo correctamente al token
+
+  console.log('Token en la acción:', token); // Verifica que el token esté aquí
+
+  try {
+    const response = await axios.post(`${BASE_URL}/clientes`, clientData, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Incluye el token en los encabezados
+      },
+    });
+    dispatch({
+      type: REGISTER_CLIENT_SUCCESS,
+      payload: response.data,
+    });
+  } catch (error) {
+    console.error('Error en el registro del cliente:', error); // Verifica el error
+    dispatch({
+      type: REGISTER_CLIENT_FAILURE,
+      payload: error.response?.data.message || 'Error en el registro del cliente',
+    });
+  }
+};
+
+

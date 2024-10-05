@@ -20,10 +20,10 @@ const AdminPanel = () => {
         <h1 className="text-3xl font-bold text-center mb-6">Panel de Administración</h1>
         <div className="flex flex-col md:flex-row justify-around mb-6">
           <Link to="/register" className="bg-blue-500 text-white px-4 py-2 rounded-lg mb-4 md:mb-0 hover:bg-blue-600">
-            Registrar Nuevo Cliente
+            Registrar Nuevo Comercio
           </Link>
-          <Link to="/" className="bg-green-500 text-white px-4 py-2 rounded-lg mb-4 md:mb-0 hover:bg-green-600">
-            Ver Clientes
+          <Link to="/registrarCliente" className="bg-green-500 text-white px-4 py-2 rounded-lg mb-4 md:mb-0 hover:bg-green-600">
+            Registrar nuevo cliente
           </Link>
           <Link to="/newService" className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600">
             Cargar Servicio

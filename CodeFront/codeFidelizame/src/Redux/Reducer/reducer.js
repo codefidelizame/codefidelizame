@@ -16,6 +16,9 @@ import {
     FETCH_ALL_SERVICES_REQUEST,
     FETCH_ALL_SERVICES_SUCCESS,
     FETCH_ALL_SERVICES_FAILURE,
+    REGISTER_CLIENT_REQUEST,
+    REGISTER_CLIENT_SUCCESS,
+    REGISTER_CLIENT_FAILURE,
   } from '../Actions/actions-type'
 
 
@@ -29,6 +32,7 @@ import {
     service: null,
     services: [],
     clientServices: [],
+    client: null,
   };
   
   
@@ -126,6 +130,25 @@ import {
             loading: false,
             error: action.payload,
           };
+          case REGISTER_CLIENT_REQUEST:
+            return {
+              ...state,
+              loading: true,
+              error: null,
+            };
+          case REGISTER_CLIENT_SUCCESS:
+            return {
+              ...state,
+              loading: false,
+              client: action.payload,
+              error: null,
+            };
+          case REGISTER_CLIENT_FAILURE:
+            return {
+              ...state,
+              loading: false,
+              error: action.payload,
+            };
     
       default:
         return state;
