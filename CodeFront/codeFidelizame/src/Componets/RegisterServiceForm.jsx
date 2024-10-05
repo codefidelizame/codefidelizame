@@ -15,7 +15,7 @@ const RegisterServiceForm = () => {
   const userInfo = useSelector((state) => state.userInfo); // Asegúrate de acceder a la propiedad correcta
   const loading = useSelector((state) => state.loading)
   const error = useSelector((state) => state.error)
-  
+
   const handleChange = (e) => {
     setServiceData({
       ...serviceData,
@@ -29,7 +29,7 @@ const RegisterServiceForm = () => {
   };
 
   // Asegúrate de que el usuario esté autenticado antes de mostrar el formulario
-  if (!userInfo?.id) { // Cambia aquí para verificar la existencia de userInfo
+  if (!userInfo) { // Cambia aquí para verificar la existencia de userInfo
     return <p>Debes iniciar sesión para registrar un servicio.</p>;
   }
 
