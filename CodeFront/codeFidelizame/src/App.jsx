@@ -6,12 +6,13 @@ import AdminPanel from './Componets/AdminPanel';
 import RegisterServiceForm from './Componets/RegisterServiceForm';
 import PrivateRoute from './Componets/PrivateRoute';
 import RegisterClientForm from './Componets/RegisterClientsForm';
-
+import Landing from './Componets/Landing';
 
 function App() {
   return (
     <Router>
        <Routes>
+        <Route exact path='/landing' element={<Landing/>}/>
        <Route exact path="/registrarCliente" element={<PrivateRoute><RegisterClientForm/></PrivateRoute>}/>
        <Route exact path="/register" element={<Register/>}/>
        <Route exact path="/" element={<Login/>}/>

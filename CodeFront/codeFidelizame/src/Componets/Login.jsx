@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../Redux/Actions/actions';
 import { useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -42,9 +44,9 @@ const Login = () => {
   
   
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-indigo-600">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center">Iniciar Sesión</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center font-nunito">Iniciar Sesión</h2>
 
         {error && (
           <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
@@ -52,7 +54,7 @@ const Login = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+<form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block font-nunito text-gray-700 mb-2">Correo Electrónico</label>
             <input
@@ -67,23 +69,25 @@ const Login = () => {
           </div>
           
           <div className="mb-4 relative">
-            <label className="block text-gray-700 mb-2">Contraseña</label>
-            <input
-              type={showPassword ? 'text' : 'password'} // Mostrar u ocultar la contraseña
-              name="password"
-              value={credentials.password}
-              onChange={handleChange}
-              className="border border-gray-300 rounded-lg p-2 w-full"
-              placeholder="Ingresa tu contraseña"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-3 text-gray-600"
-            >
-              {showPassword ? 'Ocultar' : 'Mostrar'}
-            </button>
+            <label className="block text-gray-700 mb-2 font-nunito">Contraseña</label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                value={credentials.password}
+                onChange={handleChange}
+                className="border border-gray-300 rounded-lg p-2 w-full pr-10"
+                placeholder="Ingresa tu contraseña"
+                required
+              />
+              {/* Icono dentro del input */}
+              <span
+                className="absolute right-3 top-3 cursor-pointer text-gray-600"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Cambiar ícono según el estado */}
+              </span>
+            </div>
           </div>
 
           <button
