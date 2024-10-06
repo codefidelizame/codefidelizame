@@ -24,7 +24,13 @@ import {
   REGISTER_CLIENT_FAILURE,
   FETCH_CLIENTS_REQUEST, 
   FETCH_CLIENTS_SUCCESS, 
-  FETCH_CLIENTS_FAIL
+  FETCH_CLIENTS_FAIL,
+  DELETE_CLIENT_REQUEST,
+  DELETE_CLIENT_SUCCESS,
+  DELETE_CLIENT_FAIL,
+  EDIT_CLIENT_REQUEST,
+  EDIT_CLIENT_SUCCESS,
+  EDIT_CLIENT_FAIL
 } from './actions-type';
 
 // Acción para registrar un nuevo Comercio
@@ -214,5 +220,57 @@ export const fetchClients = () => async (dispatch, getState) => {
     });
   }
 };
+export const deleteClient = (id) => async (dispatch, getState) => {
+  try {
+    const token = localStorage.getItem('token') || getState().userLogin.token;
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    await axios.delete(`${BASE_URL}/clientes/${id}`, config);
+
+    dispatch({
+      type: DELETE_CLIENT_SUCCESS,
+      payload: id, // Deberías enviar el ID para eliminarlo del estado
+    });
+  } catch (error) {
+    dispatch({
+      type: DELETE_CLIENT_FAIL,
+      payload: error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+};
+export const editClient = (clientId, clientData) => async (dispatch, getState) => {
+  try {
+    const token = localStorage.getItem('token') || getState().userLogin.token;
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const response = await axios.put(`${BASE_URL}/clientes/${clientId}`, clientData, config);
+    const updatedClient = response.data.client;
+
+    dispatch({
+      type: EDIT_CLIENT_SUCCESS,
+      payload: updatedClient,
+    });
+  } catch (error) {
+    dispatch({
+      type: EDIT_CLIENT_FAIL,
+      payload: error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+};
+
 
 

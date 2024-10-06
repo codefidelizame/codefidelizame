@@ -9,6 +9,7 @@ module.exports = (sequelize) => {
         defaultValue: 0,
         allowNull: false, // Lleva el control de la cantidad de servicios comprados por un cliente en un comercio
       },
+      
     },
     {
       paranoid: true, // Para soft delete si lo deseas en la relación

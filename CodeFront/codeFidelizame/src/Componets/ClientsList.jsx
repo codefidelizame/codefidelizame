@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchClients} from '../Redux/Actions/actions';
-//import { EditIcon, TrashIcon } from '@heroicons/react/outline'; // Asegúrate de tener estos iconos
+import { fetchClients, deleteClient, editClient} from '../Redux/Actions/actions';
+import { AiOutlineEdit, AiFillDelete } from 'react-icons/ai';
 
 const ClientsList = () => {
   const dispatch = useDispatch();
@@ -21,11 +21,17 @@ const ClientsList = () => {
     }
   }, [dispatch, userInfo]);
 
-//   const handleDelete = (clientId) => {
-//     if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
-//       dispatch(deleteClient(clientId));
-//     }
-//   };
+  const handleDelete = (clientId) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+      dispatch(deleteClient(clientId));
+    }
+  };
+
+  const handleEdit = (clientId) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+      dispatch(editClient(clientId));
+    }
+  };
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -51,12 +57,12 @@ const ClientsList = () => {
               <td className="py-3 px-6">{client.phone}</td>
               <td className="py-3 px-6">{client.totalServices}</td>
               <td className="py-3 px-6 flex space-x-2">
-                {/* <button onClick={() => console.log(`Editando cliente ${client.id}`)}>
-                  <EditIcon className="w-5 h-5 text-blue-600" />
-                </button> */}
-                {/* <button onClick={() => handleDelete(client.id)}>
-                  <TrashIcon className="w-5 h-5 text-red-600" />
-                </button> */}
+                <button onClick={() => handleEdit(client.id)}>
+                  <AiOutlineEdit className="w-5 h-5 text-blue-600" />
+                </button>
+                <button onClick={() => handleDelete(client.id)}>
+                  <AiFillDelete className="w-5 h-5 text-red-600" />
+                </button>
               </td>
             </tr>
           ))}

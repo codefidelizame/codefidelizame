@@ -21,7 +21,10 @@ import {
     REGISTER_CLIENT_FAILURE,
     FETCH_CLIENTS_REQUEST, 
     FETCH_CLIENTS_SUCCESS, 
-    FETCH_CLIENTS_FAIL
+    FETCH_CLIENTS_FAIL,
+    DELETE_CLIENT_SUCCESS,
+    EDIT_CLIENT_SUCCESS,
+  
   } from '../Actions/actions-type'
 
 
@@ -170,6 +173,18 @@ import {
                 loading: false,
                 error: action.payload, // Guardar el mensaje de error
               };
+              case DELETE_CLIENT_SUCCESS:
+                return {
+                  ...state,
+                  clients: state.clients.filter(client => client.id !== action.payload),
+                };
+              case EDIT_CLIENT_SUCCESS:
+                return {
+                  ...state,
+                  clients: state.clients.map(client =>
+                    client.id === action.payload.id ? action.payload : client
+                  ),
+                };
     
       default:
         return state;

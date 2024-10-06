@@ -9,5 +9,10 @@ router.post('/',authMiddleware,  clientController.registerClient);
 
 // Ruta para obtener todos los clientes (opcional)
 router.get('/',authMiddleware, allClientController.getAllClients);
+// Ruta para eliminar un cliente
+router.delete('/:id', authMiddleware, allClientController.deleteClient);
+
+// Ruta para actualizar un cliente
+router.put('/:id', authMiddleware, allClientController.updateClient);
 
 module.exports = router;
