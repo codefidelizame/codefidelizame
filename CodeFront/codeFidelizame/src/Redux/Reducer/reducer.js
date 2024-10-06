@@ -19,6 +19,9 @@ import {
     REGISTER_CLIENT_REQUEST,
     REGISTER_CLIENT_SUCCESS,
     REGISTER_CLIENT_FAILURE,
+    FETCH_CLIENTS_REQUEST, 
+    FETCH_CLIENTS_SUCCESS, 
+    FETCH_CLIENTS_FAIL
   } from '../Actions/actions-type'
 
 
@@ -33,6 +36,7 @@ import {
     services: [],
     clientServices: [],
     client: null,
+    clients: [],
   };
   
   
@@ -149,6 +153,23 @@ import {
               loading: false,
               error: action.payload,
             };
+            case FETCH_CLIENTS_REQUEST:
+              return {
+                ...state,
+                loading: true,
+              };
+            case FETCH_CLIENTS_SUCCESS:
+              return {
+                ...state,
+                loading: false,
+                clients: action.payload, // Almacenar los clientes recibidos
+              };
+            case FETCH_CLIENTS_FAIL:
+              return {
+                ...state,
+                loading: false,
+                error: action.payload, // Guardar el mensaje de error
+              };
     
       default:
         return state;

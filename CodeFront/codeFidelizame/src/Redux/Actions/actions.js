@@ -21,7 +21,10 @@ import {
   FETCH_ALL_SERVICES_FAILURE,
   REGISTER_CLIENT_REQUEST,
   REGISTER_CLIENT_SUCCESS,
-  REGISTER_CLIENT_FAILURE
+  REGISTER_CLIENT_FAILURE,
+  FETCH_CLIENTS_REQUEST, 
+  FETCH_CLIENTS_SUCCESS, 
+  FETCH_CLIENTS_FAIL
 } from './actions-type';
 
 // Acción para registrar un nuevo Comercio
@@ -164,6 +167,50 @@ export const registerClient = (clientData) => async (dispatch, getState) => {
     dispatch({
       type: REGISTER_CLIENT_FAILURE,
       payload: error.response?.data.message || 'Error en el registro del cliente',
+    });
+  }
+};
+
+export const fetchClients = () => async (dispatch, getState) => {
+  dispatch({ type: FETCH_CLIENTS_REQUEST });
+
+  try {
+    // Obtener el token almacenado en localStorage o desde el estado de Redux
+    const token = localStorage.getItem('token') || getState().userLogin.token;
+
+    // Configurar los encabezados de la solicitud para incluir el token
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`, // Enviar el token en el encabezado Authorization
+      },
+    };
+
+    // Realizar la solicitud GET a la API de clientes
+    const response = await axios.get(`${BASE_URL}/clientes`, config);
+
+    // Imprimir la respuesta completa para depuración
+    console.log('Response:', response);
+
+    const { clients } = response.data;
+
+    // Verifica si se obtuvieron clientes
+    console.log('Clientes obtenidos:', clients);
+
+    // Dispatch de la acción de éxito con los datos de los clientes
+    dispatch({
+      type: FETCH_CLIENTS_SUCCESS,
+      payload: clients,
+    });
+  } catch (error) {
+    // Imprimir el error para depuración
+    console.error('Error al obtener clientes:', error);
+
+    // Dispatch de la acción de fallo
+    dispatch({
+      type: FETCH_CLIENTS_FAIL,
+      payload: error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message,
     });
   }
 };
