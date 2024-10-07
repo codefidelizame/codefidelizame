@@ -1,23 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerService } from '../Redux/Actions/actions';
-import Logo from '../assets/code.png'; // Importa tu logo
-import { FaSignOutAlt } from 'react-icons/fa'; // Importa el ícono de logout
+import { registerService, fetchClients } from '../Redux/Actions/actions'; // Importa la acción para obtener todos los clientes
+import Logo from '../assets/code.png';
+import { FaSignOutAlt } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 
 const RegisterServiceForm = () => {
   const [serviceData, setServiceData] = useState({
     clientId: '',
+    email: '', 
     serviceName: '',
     price: '',
     serviceDate: '',
   });
 
   const dispatch = useDispatch();
+  const clients = useSelector((state) => state.clients); // Obtener todos los clientes del estado global
   const userInfo = useSelector((state) => state.userInfo);
   const loading = useSelector((state) => state.loading);
   const error = useSelector((state) => state.error);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(fetchClients()); // Llamar a la acción para obtener todos los clientes al montar el componente
+  }, [dispatch]);
 
   const handleChange = (e) => {
     setServiceData({
@@ -26,42 +32,53 @@ const RegisterServiceForm = () => {
     });
   };
 
+  // Usar useEffect para actualizar clientId cuando el email cambie
+  useEffect(() => {
+    if (serviceData.email && clients.length > 0) {
+      const client = clients.find((c) => c.email === serviceData.email);
+      if (client) {
+        setServiceData((prevData) => ({
+          ...prevData,
+          clientId: client.id, // Auto-llenar clientId si se encuentra el cliente
+        }));
+      } else {
+        setServiceData((prevData) => ({
+          ...prevData,
+          clientId: '', // Limpiar si no se encuentra
+        }));
+      }
+    }
+  }, [serviceData.email, clients]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(registerService(serviceData));
   };
 
   const handleLogout = () => {
-    
-    navigate('/landing'); 
+    navigate('/landing');
   };
 
-  // Asegúrate de que el usuario esté autenticado antes de mostrar el formulario
   if (!userInfo) {
     return <p>Debes iniciar sesión para registrar un servicio.</p>;
   }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-400">
-      {/* Navbar que ocupa todo el ancho de la pantalla */}
       <div className="flex justify-between items-center p-4 bg-white shadow-md">
-      <nav className="w-full flex justify-start items-center py-4 px-8 bg-transparent">
-        <Link to="/landing" className="text-white text-xl font-bold cursor-pointer flex items-center">
-          <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
-          
-        </Link>
-      </nav>
+        <nav className="w-full flex justify-start items-center py-4 px-8 bg-transparent">
+          <Link to="/landing" className="text-white text-xl font-bold cursor-pointer flex items-center">
+            <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
+          </Link>
+        </nav>
         <Link to="/panel" className="text-gray-200 font-nunito bg-blue-500 py-2 px-4 rounded-lg mr-8">
           PANEL
         </Link>
-
-        {/* Botón de Logout */}
         <button onClick={handleLogout} className="text-gray-700 hover:text-red-500">
           <FaSignOutAlt className="h-6 w-6" />
         </button>
       </div>
 
-      {/* Contenedor del formulario de registro del servicio */}
       <div className="flex items-center justify-center flex-grow">
         <div className="bg-white p-6 rounded-lg shadow-lg w-96">
           <h2 className="text-2xl font-bold mb-4 font-nunito">Registro de Servicio</h2>
@@ -69,13 +86,23 @@ const RegisterServiceForm = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <input
+                type="email"
+                name="email"
+                value={serviceData.email}
+                onChange={handleChange}
+                placeholder="Email del Cliente"
+                className="border border-gray-300 rounded-lg p-2 w-full"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <input
                 type="text"
                 name="clientId"
                 value={serviceData.clientId}
-                onChange={handleChange}
-                placeholder="ID del Cliente"
+                placeholder="ID del Cliente (auto-llenado)"
                 className="border border-gray-300 rounded-lg p-2 w-full"
-                required
+                disabled
               />
             </div>
             <div className="mb-4">
@@ -125,4 +152,3 @@ const RegisterServiceForm = () => {
 };
 
 export default RegisterServiceForm;
-
