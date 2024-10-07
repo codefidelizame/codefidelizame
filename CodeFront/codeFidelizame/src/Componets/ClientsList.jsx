@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchClients, deleteClient, editClient} from '../Redux/Actions/actions';
 import { AiOutlineEdit, AiFillDelete } from 'react-icons/ai';
@@ -6,20 +6,27 @@ import { AiOutlineEdit, AiFillDelete } from 'react-icons/ai';
 const ClientsList = () => {
   const dispatch = useDispatch();
 
-  // Acceder al estado de los clientes y la información del usuario
   const error = useSelector((state) => state.error);
   const loading = useSelector((state) => state.loading);
   const clients = useSelector((state) => state.clients);
   const userInfo = useSelector((state) => state.userInfo);
 
-  useEffect(() => {
-    console.log('Componente ClientsList montado.');
+  // Estado para saber qué cliente está en modo de edición
+  const [editClientId, setEditClientId] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    totalServices: '',
+  });
 
+  const [updated, setUpdated] = useState(false);
+
+  useEffect(() => {
     if (userInfo) {
-      console.log('Token encontrado, despachando fetchClients...');
       dispatch(fetchClients());
     }
-  }, [dispatch, userInfo]);
+  }, [dispatch, userInfo, updated]);
 
   const handleDelete = (clientId) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
@@ -27,11 +34,36 @@ const ClientsList = () => {
     }
   };
 
-  const handleEdit = (clientId) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
-      dispatch(editClient(clientId));
-    }
+  const handleEditClick = (client) => {
+    setEditClientId(client.id);
+    setEditFormData({
+      name: client.name,
+      email: client.email,
+      phone: client.phone,
+      totalServices: client.totalServices,
+    });
   };
+
+  const handleCancelClick = () => {
+    setEditClientId(null);
+  };
+
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleSaveClick = () => {
+    dispatch(editClient(editClientId, editFormData))
+      .then(() => {
+        setEditClientId(null); // Sal del modo edición
+        setUpdated(!updated);
+      })
+      .catch((error) => {
+        console.error("Error actualizando cliente:", error);
+      });
+  };
+  
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -52,18 +84,65 @@ const ClientsList = () => {
         <tbody className="text-gray-600 text-sm font-light">
           {clients.map((client) => (
             <tr key={client.id} className="border-b border-gray-200 hover:bg-gray-100">
-              <td className="py-3 px-6">{client.name}</td>
-              <td className="py-3 px-6">{client.email}</td>
-              <td className="py-3 px-6">{client.phone}</td>
-              <td className="py-3 px-6">{client.totalServices}</td>
-              <td className="py-3 px-6 flex space-x-2">
-                <button onClick={() => handleEdit(client.id)}>
-                  <AiOutlineEdit className="w-5 h-5 text-blue-600" />
-                </button>
-                <button onClick={() => handleDelete(client.id)}>
-                  <AiFillDelete className="w-5 h-5 text-red-600" />
-                </button>
-              </td>
+              {editClientId === client.id ? (
+                <>
+                  <td className="py-3 px-6">
+                    <input
+                      type="text"
+                      name="name"
+                      value={editFormData.name}
+                      onChange={handleEditFormChange}
+                      className="border p-1 rounded"
+                    />
+                  </td>
+                  <td className="py-3 px-6">
+                    <input
+                      type="email"
+                      name="email"
+                      value={editFormData.email}
+                      onChange={handleEditFormChange}
+                      className="border p-1 rounded"
+                    />
+                  </td>
+                  <td className="py-3 px-6">
+                    <input
+                      type="text"
+                      name="phone"
+                      value={editFormData.phone}
+                      onChange={handleEditFormChange}
+                      className="border p-1 rounded"
+                    />
+                  </td>
+                  <td className="py-3 px-6">
+                    <input
+                      type="number"
+                      name="totalServices"
+                      value={editFormData.totalServices}
+                      onChange={handleEditFormChange}
+                      className="border p-1 rounded"
+                    />
+                  </td>
+                  <td className="py-3 px-6 flex space-x-2">
+                    <button onClick={handleSaveClick} className="text-green-600">Guardar</button>
+                    <button onClick={handleCancelClick} className="text-red-600">Cancelar</button>
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td className="py-3 px-6">{client.name}</td>
+                  <td className="py-3 px-6">{client.email}</td>
+                  <td className="py-3 px-6">{client.phone}</td>
+                  <td className="py-3 px-6">{client.totalServices}</td>
+                  <td className="py-3 px-6 flex space-x-2">
+                    <button onClick={() => handleEditClick(client)}>
+                      <AiOutlineEdit className="w-5 h-5 text-blue-600" />
+                    </button>
+                    <button onClick={() => handleDelete(client.id)}>
+                      <AiFillDelete className="w-5 h-5 text-red-600" />
+                    </button>
+                  </td>
+                </>
+              )}
             </tr>
           ))}
         </tbody>

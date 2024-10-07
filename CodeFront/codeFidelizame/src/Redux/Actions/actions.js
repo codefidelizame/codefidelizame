@@ -256,15 +256,15 @@ export const editClient = (clientId, clientData) => async (dispatch, getState) =
     };
 
     const response = await axios.put(`${BASE_URL}/clientes/${clientId}`, clientData, config);
-    const updatedClient = response.data.client;
+    const updatedClient = response.data.client; // Asegúrate de que la respuesta devuelva el cliente actualizado correctamente
 
     dispatch({
-      type: EDIT_CLIENT_SUCCESS,
-      payload: updatedClient,
+      type: 'EDIT_CLIENT_SUCCESS',
+      payload: updatedClient, // Enviamos el cliente actualizado
     });
   } catch (error) {
     dispatch({
-      type: EDIT_CLIENT_FAIL,
+      type: 'EDIT_CLIENT_FAIL',
       payload: error.response && error.response.data.message
         ? error.response.data.message
         : error.message,
