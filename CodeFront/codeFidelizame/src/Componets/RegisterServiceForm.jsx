@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerService, fetchClients } from '../Redux/Actions/actions'; // Importa la acción para obtener todos los clientes
+import { registerService, fetchClients } from '../Redux/Actions/actions';
+import { toast } from 'react-toastify'; // Asegúrate de importar toast
 import Logo from '../assets/code.png';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,21 +9,21 @@ import { Link, useNavigate } from 'react-router-dom';
 const RegisterServiceForm = () => {
   const [serviceData, setServiceData] = useState({
     clientId: '',
-    email: '', 
+    email: '',
     serviceName: '',
     price: '',
     serviceDate: '',
   });
 
   const dispatch = useDispatch();
-  const clients = useSelector((state) => state.clients); // Obtener todos los clientes del estado global
+  const clients = useSelector((state) => state.clients);
   const userInfo = useSelector((state) => state.userInfo);
   const loading = useSelector((state) => state.loading);
   const error = useSelector((state) => state.error);
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(fetchClients()); // Llamar a la acción para obtener todos los clientes al montar el componente
+    dispatch(fetchClients());
   }, [dispatch]);
 
   const handleChange = (e) => {
@@ -32,22 +33,42 @@ const RegisterServiceForm = () => {
     });
   };
 
-  // Usar useEffect para actualizar clientId cuando el email cambie
-  useEffect(() => {
+  // Función debounce
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      timeoutId = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
+
+  // Verificar existencia del cliente
+  const checkClientExistence = () => {
     if (serviceData.email && clients.length > 0) {
       const client = clients.find((c) => c.email === serviceData.email);
       if (client) {
         setServiceData((prevData) => ({
           ...prevData,
-          clientId: client.id, // Auto-llenar clientId si se encuentra el cliente
+          clientId: client.id,
         }));
       } else {
+        toast.error('No existe cliente.'); // Mostrar alerta si no existe
         setServiceData((prevData) => ({
           ...prevData,
-          clientId: '', // Limpiar si no se encuentra
+          clientId: '',
         }));
       }
     }
+  };
+
+  // Usar useEffect con debounce
+  useEffect(() => {
+    const debouncedCheck = debounce(checkClientExistence, 300); // 300 ms de espera
+    debouncedCheck();
   }, [serviceData.email, clients]);
 
   const handleSubmit = (e) => {
