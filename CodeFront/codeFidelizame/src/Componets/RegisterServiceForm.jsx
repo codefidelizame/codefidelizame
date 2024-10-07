@@ -32,9 +32,8 @@ const RegisterServiceForm = () => {
   };
 
   const handleLogout = () => {
-    // Aquí puedes manejar la lógica de logout
-    // dispatch(logout()); // Si tienes una acción de logout
-    navigate('/landing'); // Redirige a la página de inicio después de cerrar sesión
+    
+    navigate('/landing'); 
   };
 
   // Asegúrate de que el usuario esté autenticado antes de mostrar el formulario

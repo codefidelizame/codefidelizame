@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchClients, deleteClient, editClient} from '../Redux/Actions/actions';
 import { AiOutlineEdit, AiFillDelete } from 'react-icons/ai';
+import Logo from '../assets/code.png'; 
+import { Link , useNavigate} from 'react-router-dom';
+import { FaSignOutAlt } from 'react-icons/fa'; 
 
 const ClientsList = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const error = useSelector((state) => state.error);
   const loading = useSelector((state) => state.loading);
@@ -63,13 +67,34 @@ const ClientsList = () => {
         console.error("Error actualizando cliente:", error);
       });
   };
-  
+  const handleLogout = () => {
+    navigate('/landing'); 
+  };
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="container mx-auto p-4">
+    <nav className="w-full flex justify-between items-center py-4 px-8 bg-gray-200 text-gray-700">
+      {/* Logo */}
+      <Link to="/landing" className="flex items-center">
+        <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
+      </Link>
+
+      {/* Botón de Panel */}
+      <Link
+        to="/panel"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        PANEL
+      </Link>
+
+      {/* Botón de Logout */}
+      <button onClick={handleLogout} className="text-gray-700 hover:text-red-500">
+        <FaSignOutAlt className="h-6 w-6" />
+      </button>
+    </nav>
       <h1 className="text-2xl font-bold mb-4">Lista de Clientes</h1>
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
@@ -148,6 +173,7 @@ const ClientsList = () => {
         </tbody>
       </table>
     </div>
+   
   );
 };
 
