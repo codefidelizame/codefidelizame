@@ -24,6 +24,9 @@ import {
     FETCH_CLIENTS_FAIL,
     DELETE_CLIENT_SUCCESS,
     EDIT_CLIENT_SUCCESS,
+    FETCH_COMERCIOS_REQUEST,
+    FETCH_COMERCIOS_SUCCESS,
+    FETCH_COMERCIOS_FAIL
   
   } from '../Actions/actions-type'
 
@@ -40,6 +43,7 @@ import {
     clientServices: [],
     client: null,
     clients: [],
+    comercios:[],
   };
   
   
@@ -185,6 +189,23 @@ import {
                     client.id === action.payload.id ? action.payload : client
                   ),
                 };
+                case FETCH_COMERCIOS_REQUEST:
+                  return {
+                    ...state,
+                    loading: true,
+                  };
+                case FETCH_COMERCIOS_SUCCESS:
+                  return {
+                    ...state,
+                    loading: false,
+                    comercios: action.payload, // Almacenar los COMERCIOSes recibidos
+                  };
+                case FETCH_COMERCIOS_FAIL:
+                  return {
+                    ...state,
+                    loading: false,
+                    error: action.payload, // Guardar el mensaje de error
+                  };
     
       default:
         return state;

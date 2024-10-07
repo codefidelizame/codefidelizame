@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const {Comercio} = require('../data');  // Modelo de administrador
 require('dotenv').config();  // Para usar las variables de entorno
 
-// Registrar un administrador
+// Registrar un Comercio
 exports.register = async (req, res) => {
     const { name, email, password, role} = req.body;
   
@@ -59,5 +59,15 @@ exports.login = async (req, res) => {
   } catch (error) {
     console.error('Error en el inicio de sesión:', error);  // Log del error en la consola
     res.status(500).json({ message: 'Error en el inicio de sesión', error: error.message });
+  }
+};
+//traer todos los comercios
+exports.getAllComercios = async (req, res) => {
+  try {
+    const comercios = await Comercio.findAll();  // Obtener todos los comercios de la base de datos
+    res.status(200).json(comercios);  // Devolver los comercios encontrados
+  } catch (error) {
+    console.error('Error al obtener comercios:', error);  // Log del error en la consola
+    res.status(500).json({ message: 'Error al obtener comercios', error: error.message });
   }
 };

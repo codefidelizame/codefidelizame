@@ -17,7 +17,7 @@ const Landing = () => {
           </div>
           
           {/* Ingresar Icon a la derecha */}
-          <Link to="/" className="text-white text-2xl sm:text-3xl cursor-pointer">
+          <Link to="/login" className="text-white text-2xl sm:text-3xl cursor-pointer">
             <FaSignInAlt />
           </Link>
         </div>

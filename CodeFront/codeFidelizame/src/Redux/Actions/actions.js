@@ -30,7 +30,10 @@ import {
   DELETE_CLIENT_FAIL,
   EDIT_CLIENT_REQUEST,
   EDIT_CLIENT_SUCCESS,
-  EDIT_CLIENT_FAIL
+  EDIT_CLIENT_FAIL,
+  FETCH_COMERCIOS_REQUEST,
+  FETCH_COMERCIOS_SUCCESS,
+  FETCH_COMERCIOS_FAIL
 } from './actions-type';
 
 // Acción para registrar un nuevo Comercio
@@ -273,4 +276,51 @@ export const editClient = (clientId, clientData) => async (dispatch, getState) =
 };
 
 
+export const fetchComercios = () => async (dispatch, getState) => {
+  dispatch({ type: FETCH_COMERCIOS_REQUEST });
+
+  try {
+    // Obtener el token almacenado en localStorage o desde el estado de Redux
+    const token = localStorage.getItem('token') || getState().userLogin.token;
+console.log('Token:', token);
+
+
+    // Configurar los encabezados de la solicitud para incluir el token
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`, // Enviar el token en el encabezado Authorization
+      },
+    };
+
+    // Realizar la solicitud GET a la API de comercios
+    const response = await axios.get(`${BASE_URL}/auth/comercios`, config);
+
+    // Imprimir la respuesta completa para depuración
+    console.log('Response:', response);
+
+    // Acceder directamente a los comercios desde la respuesta
+    const comercios = response.data; // Accede directamente a los datos
+    console.log('Comercios obtenidos:', comercios);
+
+    // Verifica si se obtuvieron comercios
+    console.log('Comercios obtenidos:', comercios);
+
+    // Dispatch de la acción de éxito con los datos de los comercios
+    dispatch({
+      type: FETCH_COMERCIOS_SUCCESS,
+      payload: comercios, // Asegúrate de pasar el array directamente
+    });
+  } catch (error) {
+    // Imprimir el error para depuración
+    console.error('Error al obtener comercios:', error);
+
+    // Dispatch de la acción de fallo
+    dispatch({
+      type: FETCH_COMERCIOS_FAIL,
+      payload: error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+};
 

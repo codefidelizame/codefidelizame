@@ -13,13 +13,13 @@ const AdminPanel = () => {
   // Verificar si el usuario está autenticado
   useEffect(() => {
     if (!userInfo) {
-      navigate('/'); // Redirige a la página de login si no está autenticado
+      navigate('/login'); // 
     }
   }, [userInfo, navigate]);
 
   const handleLogout = () => {
     dispatch(logout()); // Llama a la acción de logout
-    navigate('/landing'); // Redirige a la página de inicio después de cerrar sesión
+    navigate('/'); // Redirige a la página de inicio después de cerrar sesión
   };
 
   return (
@@ -52,13 +52,13 @@ const AdminPanel = () => {
                 Registrar nuevo cliente
               </Link>
               <Link to="/newService" className="bg-blue-500 text-white px-4 py-8 rounded-lg hover:bg-yellow-600 flex items-center justify-center text-center">
-                Cargar Servicio
+                Cargar Servicio a un Cliente
               </Link>
-              <Link to="/viewServices" className="bg-blue-500 text-white px-4 py-8 rounded-lg hover:bg-blue-600 flex items-center justify-center text-center">
-                Ver Servicios
+              <Link to="/comercios" className="bg-blue-500 text-white px-4 py-8 rounded-lg hover:bg-blue-600 flex items-center justify-center text-center">
+                Listar Comercios 
               </Link>
-              <Link to="/manageUsers" className="bg-blue-500 text-white px-4 py-8 rounded-lg hover:bg-green-600 flex items-center justify-center text-center">
-                Gestionar Usuarios
+              <Link to="/" className="bg-blue-500 text-white px-4 py-8 rounded-lg hover:bg-green-600 flex items-center justify-center text-center">
+                Gestionar
               </Link>
               <Link to="/clientes" className="bg-blue-500 text-white px-4 py-8 rounded-lg hover:bg-yellow-600 flex items-center justify-center text-center">
                 Listar Clientes

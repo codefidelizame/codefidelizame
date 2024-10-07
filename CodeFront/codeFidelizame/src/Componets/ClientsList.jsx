@@ -68,7 +68,7 @@ const ClientsList = () => {
       });
   };
   const handleLogout = () => {
-    navigate('/landing'); 
+    navigate('/'); 
   };
 
   if (loading) return <p>Cargando...</p>;
@@ -78,7 +78,7 @@ const ClientsList = () => {
     <div className="container mx-auto p-4">
     <nav className="w-full flex justify-between items-center py-4 px-8 bg-gray-200 text-gray-700">
       {/* Logo */}
-      <Link to="/landing" className="flex items-center">
+      <Link to="/" className="flex items-center">
         <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
       </Link>
 

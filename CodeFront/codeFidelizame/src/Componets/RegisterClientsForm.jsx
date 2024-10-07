@@ -37,7 +37,7 @@ const RegisterClientForm = () => {
 
   const handleLogout = () => {
     dispatch(logout()); // Llama a la acción de logout
-    navigate('/landing'); // Redirige a la página de inicio después de cerrar sesión
+    navigate('/'); // Redirige a la página de inicio después de cerrar sesión
   };
 
   return (
@@ -45,7 +45,7 @@ const RegisterClientForm = () => {
       {/* Navbar que ocupa todo el ancho de la pantalla */}
       <div className="flex justify-between items-center p-4 bg-white shadow-md">
       <nav className="w-full flex justify-start items-center py-4 px-8 bg-transparent">
-        <Link to="/landing" className="text-white text-xl font-bold cursor-pointer flex items-center">
+        <Link to="/" className="text-white text-xl font-bold cursor-pointer flex items-center">
           <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
           
         </Link>
