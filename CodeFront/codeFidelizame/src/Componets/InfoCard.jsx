@@ -6,49 +6,73 @@ import fondo from '../assets/bono.png';
 
 const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
   const userInfo = useSelector((state) => state.userInfo);
-  console.log(userInfo)
   const cardRef = useRef(null); // Ref para el componente de la tarjeta
-  console.log("Props recibidas en InfoCard:", {
-    phone,
-    totalServices,
-    bonificado,
-    bonificacion,
-    userInfo
-  });
-  const handleWhatsAppShare = () => {
-    // Captura la tarjeta como imagen
-    html2canvas(cardRef.current).then((canvas) => {
-      canvas.toBlob((blob) => {
-        // Crear el FormData para subir a Cloudinary
-        const formData = new FormData();
-        formData.append('file', blob); // La imagen en formato Blob
-        formData.append('upload_preset', 'codeFidelizate'); // El upload preset de Cloudinary
 
-        // Subir la imagen a Cloudinary
-        fetch(`https://api.cloudinary.com/v1_1/dxcdz1l2b/image/upload`, {
-          method: 'POST',
-          body: formData,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.secure_url) {
-              const imageUrl = data.secure_url; // URL de la imagen subida
-              
-              console.log("Imagen subida a Cloudinary:", imageUrl); // Verificar URL en consola
-
-              // Crear un enlace de WhatsApp con la URL de la imagen
-              const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(`Comprobante de compra: ${imageUrl}`)}`;
-              window.open(whatsappUrl, '_blank'); // Abrir en una nueva pestaña
-            } else {
-              console.error('Error: No se recibió la URL segura de Cloudinary');
-            }
-          })
-          .catch((error) => {
-            console.error('Error subiendo la imagen a Cloudinary:', error);
-          });
-      });
+  const fetchImageAsBlob = async (url) => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous"; // Asegúrate de que se pueda acceder a la imagen
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            context.drawImage(img, 0, 0);
+            canvas.toBlob((blob) => {
+                resolve(blob);
+            }, 'image/png');
+        };
+        img.onerror = (error) => {
+            reject(error);
+        };
+        img.src = url; // Aquí asegúrate de que la URL es correcta
     });
-  };
+};
+
+
+const handleWhatsAppShare = async () => {
+    try {
+        const userImageBlob = await fetchImageAsBlob(userInfo.images[0]); // Cambia al índice correcto
+        const userImageUrl = URL.createObjectURL(userImageBlob);
+        const imgElement = cardRef.current.querySelector('img[alt="User Profile"]');
+        imgElement.src = userImageUrl;
+
+        // Espera un momento para que la imagen se cargue correctamente en el DOM
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const canvas = await html2canvas(cardRef.current);
+        canvas.toBlob(async (blob) => {
+            if (blob) {
+                const formData = new FormData();
+                formData.append('file', blob, 'card-image.png');
+                formData.append('upload_preset', 'codeFidelizate');
+
+                const response = await fetch(`https://api.cloudinary.com/v1_1/dxcdz1l2b/image/upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const data = await response.json();
+                if (data.secure_url) {
+                    const imageUrl = data.secure_url;
+                    console.log("Imagen subida a Cloudinary:", imageUrl);
+
+                    // Crear un enlace de WhatsApp con la URL de la imagen
+                    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(`Comprobante de compra: ${imageUrl}`)}`;
+                    window.open(whatsappUrl, '_blank'); // Abrir en una nueva pestaña
+                } else {
+                    console.error('Error: No se recibió la URL segura de Cloudinary');
+                }
+            } else {
+                console.error('Error: No se pudo generar el blob.');
+            }
+        }, 'image/png');
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+
 
   return (
     <div className="rounded-lg shadow-lg p-2 w-96 relative bg-white">
@@ -65,7 +89,7 @@ const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
         <div className="relative z-10 flex flex-col items-start text-left p-4">
           <div className="flex items-center mb-4">
             <img
-              src={userInfo.images} // Imagen de usuario
+              src={userInfo.images[0]} // Asegúrate de acceder a la URL correcta
               alt="User Profile"
               className="h-16 w-16 rounded-full border-2 border-slate-400"
             />
@@ -75,38 +99,36 @@ const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
           <p className="text-gray-700 font-nunito text-sm mt-2 font-semibold rounded-md p-1">Cliente Tel: {phone}</p>
           <p className="text-gray-700 font-nunito text-sm mt-2 font-semibold rounded-md p-1">Bono N°: {totalServices}</p>
           {bonificado && (
-  <div>
-    <p className="text-green-500">¡Servicio bonificado!</p>
-    <p>Descripción de la bonificación: {bonificacion}</p>
-  </div>
-)}
+            <div>
+              <p className="text-green-500">¡Servicio bonificado!</p>
+              <p>Descripción de la bonificación: {bonificacion}</p>
+            </div>
+          )}
 
-   {/* Redes sociales organizadas en dos columnas */}
-<div className="flex flex-wrap justify-between mt-6 text-sm space-x-2">
-  <div className="flex flex-col">
-    <a href={userInfo.facebook} target="_blank" rel="noopener noreferrer" className="flex items-center mb-1">
-      <FaFacebook className="h-4 w-4 text-blue-600 mr-2" />
-      <p className="text-gray-700 text-sm">{userInfo.facebook}</p>
-    </a>
-    <a href={userInfo.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center">
-      <FaInstagram className="h-4 w-4 text-pink-600 mr-2" />
-      <p className="text-gray-700 text-sm">{userInfo.instagram}</p>
-    </a>
-  </div>
+          {/* Redes sociales organizadas en dos columnas */}
+          <div className="flex flex-wrap justify-between mt-6 text-sm space-x-2">
+            <div className="flex flex-col">
+              <a href={userInfo.facebook} target="_blank" rel="noopener noreferrer" className="flex items-center mb-1">
+                <FaFacebook className="h-4 w-4 text-blue-600 mr-2" />
+                <p className="text-gray-700 text-sm">{userInfo.facebook}</p>
+              </a>
+              <a href={userInfo.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center">
+                <FaInstagram className="h-4 w-4 text-pink-600 mr-2" />
+                <p className="text-gray-700 text-sm">{userInfo.instagram}</p>
+              </a>
+            </div>
 
-  <div className="flex flex-col">
-    <a href={userInfo.tiktok} target="_blank" rel="noopener noreferrer" className="flex items-center mb-1">
-      <FaTiktok className="h-4 w-4 text-black mr-2" />
-      <p className="text-gray-700 text-sm">{userInfo.tiktok}</p>
-    </a>
-    <a href={userInfo.whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center">
-      <FaWhatsapp className="h-4 w-4 text-green-600 mr-2" />
-      <p className="text-gray-700 text-sm">{userInfo.whatsapp}</p>
-    </a>
-  </div>
-</div>
-
-
+            <div className="flex flex-col">
+              <a href={userInfo.tiktok} target="_blank" rel="noopener noreferrer" className="flex items-center mb-1">
+                <FaTiktok className="h-4 w-4 text-black mr-2" />
+                <p className="text-gray-700 text-sm">{userInfo.tiktok}</p>
+              </a>
+              <a href={userInfo.whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center">
+                <FaWhatsapp className="h-4 w-4 text-green-600 mr-2" />
+                <p className="text-gray-700 text-sm">{userInfo.whatsapp}</p>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -122,4 +144,3 @@ const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
 };
 
 export default InfoCard;
-
