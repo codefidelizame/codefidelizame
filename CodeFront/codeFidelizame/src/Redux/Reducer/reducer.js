@@ -91,12 +91,15 @@ import {
             ...state,
             loading: true,
           };
-        case REGISTER_SERVICE_SUCCESS:
-          return {
-            ...state,
-            loading: false,
-            service: action.payload,
-          };
+          case REGISTER_SERVICE_SUCCESS:
+            // Aquí se asume que `response.data` incluye el cliente actualizado
+            const updatedClients = state.clients.map(client =>
+              client.id === action.payload.clientId // Cambia esto si tu payload es diferente
+                ? { ...client, totalServices: client.totalServices + 1 } // Aumenta totalServices en 1
+                : client
+            );
+      
+            return { ...state, clients: updatedClients, loading: false };
         case REGISTER_SERVICE_FAILURE:
           return {
             ...state,

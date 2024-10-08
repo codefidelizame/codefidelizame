@@ -5,7 +5,7 @@ require('dotenv').config();  // Para usar las variables de entorno
 
 // Registrar un Comercio
 exports.register = async (req, res) => {
-    const { name, email, password, role} = req.body;
+    const { name, email, password, role, images, instagram, facebook, tiktok, whatsapp} = req.body;
   
 
   
@@ -15,7 +15,17 @@ exports.register = async (req, res) => {
       console.log('Contraseña hasheada:', hashedPassword);
   
       // Crear el nuevo administrador en la base de datos
-      const newAdmin = await Comercio.create({ name, email, role, password: hashedPassword });
+      const newAdmin = await Comercio.create({ 
+        name, 
+        email, 
+        role, 
+        password: hashedPassword,
+        images,       
+        instagram,
+        facebook,
+        tiktok,
+        whatsapp
+      });
       console.log('Admin creado:', newAdmin);
   
       res.status(201).json({ message: 'Admin registrado con éxito', admin: newAdmin });
@@ -54,6 +64,11 @@ exports.login = async (req, res) => {
         name: admin.name,    // Nombre del usuario
         email: admin.email,  // Email del usuario
         role: admin.role,    // Rol del usuario (Admin, User, etc.)
+        images: admin.images,
+        instagram:admin.instagram,
+        facebook:admin.facebook,
+        tiktok:admin.tiktok,
+        whatsapp:admin.whatsapp
       },
     });
   } catch (error) {

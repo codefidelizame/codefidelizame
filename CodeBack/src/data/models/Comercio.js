@@ -24,6 +24,27 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         defaultValue: 'comercio'
       },
+      images: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        defaultValue: [],
+        allowNull: false,
+      },
+      instagram: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      facebook: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      tiktok: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      whatsapp: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
 
       deletedAt: {
         type: DataTypes.DATE,

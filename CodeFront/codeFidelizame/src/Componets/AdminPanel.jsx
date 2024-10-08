@@ -7,6 +7,7 @@ import { logout } from '../Redux/Actions/actions'; // Asegúrate de que esta sea
 
 const AdminPanel = () => {
   const userInfo = useSelector((state) => state.userInfo);
+  console.log(userInfo)
   const dispatch = useDispatch(); // Hook para despachar acciones
   const navigate = useNavigate();
   
@@ -24,7 +25,6 @@ const AdminPanel = () => {
 
   return (
     <div className="min-h-screen bg-gray-400 flex flex-col items-center">
-      
       {/* Navbar que ocupa todo el ancho de la pantalla */}
       <div className="relative w-full flex justify-between items-center p-4 mr-6 ml-6">
         <nav className="w-full flex justify-start items-center py-4 px-8 bg-transparent">
@@ -38,8 +38,20 @@ const AdminPanel = () => {
       </div>
 
       <div className="bg-gray-200 w-full max-w-4xl p-8 rounded-lg shadow-lg mt-6">
-        <h1 className="text-3xl font-bold font-nunito text-gray-700 text-center mb-6">Panel de Administración</h1>
+        {/* Mensaje de bienvenida y imagen del usuario */}
+        <div className="flex items-center mb-6">
+          <img
+            src={userInfo?.images[0]} // Usar la primera imagen del array
+            alt="User Avatar"
+            className="h-16 w-16 rounded-full mr-4"
+          />
+          <h1 className="text-3xl font-bold font-nunito text-gray-700">
+            Bienvenid@, {userInfo?.name || 'Administrador'}!
+          </h1>
+        </div>
+
         
+
         {/* Renderizado condicional según el rol */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {userInfo?.role === 'admin' && (
@@ -82,7 +94,7 @@ const AdminPanel = () => {
         </div>
 
         <p className="text-gray-700 text-center">
-          Bienvenido, {userInfo?.name || 'Administrador'}. ¡Gestiona los recursos desde el panel!
+          ¡Gestiona los recursos desde el panel!
         </p>
       </div>
     </div>

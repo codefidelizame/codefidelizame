@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { useDispatch, useSelector } from 'react-redux';
 import { registerService, fetchClients } from '../Redux/Actions/actions';
 import { toast } from 'react-toastify'; // Asegúrate de importar toast
 import Logo from '../assets/code.png';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
+import InfoCard from './InfoCard';
 
 const RegisterServiceForm = () => {
   const [serviceData, setServiceData] = useState({
     clientId: '',
-    email: '',
+    phone: '',
+    totalServices: 0,
     serviceName: '',
     price: '',
-    serviceDate: '',
+    serviceDate: new Date().toISOString().split('T')[0],
   });
-
+ 
   const dispatch = useDispatch();
   const clients = useSelector((state) => state.clients);
   const userInfo = useSelector((state) => state.userInfo);
@@ -48,18 +50,20 @@ const RegisterServiceForm = () => {
 
   // Verificar existencia del cliente
   const checkClientExistence = () => {
-    if (serviceData.email && clients.length > 0) {
-      const client = clients.find((c) => c.email === serviceData.email);
+    if (serviceData.phone && clients.length > 0) {
+      const client = clients.find((c) => c.phone === serviceData.phone);
       if (client) {
         setServiceData((prevData) => ({
           ...prevData,
           clientId: client.id,
+          totalServices: client.totalServices,
         }));
       } else {
         toast.error('No existe cliente.'); // Mostrar alerta si no existe
         setServiceData((prevData) => ({
           ...prevData,
           clientId: '',
+          totalServices: 0,
         }));
       }
     }
@@ -69,13 +73,27 @@ const RegisterServiceForm = () => {
   useEffect(() => {
     const debouncedCheck = debounce(checkClientExistence, 300); // 300 ms de espera
     debouncedCheck();
-  }, [serviceData.email, clients]);
+  }, [serviceData.phone, clients]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(registerService(serviceData));
+  
+    // Esperar el registro del servicio
+    await dispatch(registerService(serviceData));
+  
+    // Actualizar totalServices solo si el cliente existe
+    const client = clients.find((c) => c.id === serviceData.clientId);
+    if (client) {
+      const updatedTotalServices = client.totalServices + 1; // Incrementar el total de servicios
+      setServiceData((prevData) => ({
+        ...prevData,
+        totalServices: updatedTotalServices,
+      }));
+    }
+  
+    toast.success('Servicio registrado exitosamente');
   };
-
+  
   const handleLogout = () => {
     navigate('/');
   };
@@ -86,7 +104,7 @@ const RegisterServiceForm = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-400">
-      <div className="flex justify-between items-center p-4 bg-white shadow-md">
+      <div className="flex justify-between items-center bg-white shadow-md">
         <nav className="w-full flex justify-start items-center py-4 px-8 bg-transparent">
           <Link to="/" className="text-white text-xl font-bold cursor-pointer flex items-center">
             <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
@@ -100,18 +118,18 @@ const RegisterServiceForm = () => {
         </button>
       </div>
 
-      <div className="flex items-center justify-center flex-grow">
+      <div className="flex items-start justify-center flex-grow p-10 space-x-10 flex-wrap">
         <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-          <h2 className="text-2xl font-bold mb-4 font-nunito">Registro de Servicio</h2>
+          <h2 className="text-2xl font-bold mb-4 font-nunito">Registro de Compra</h2>
           {error && <div className="text-red-500 mb-4">{error}</div>}
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <input
-                type="email"
-                name="email"
-                value={serviceData.email}
+                type="text"
+                name="phone"
+                value={serviceData.phone}
                 onChange={handleChange}
-                placeholder="Email del Cliente"
+                placeholder="phone del Cliente"
                 className="border border-gray-300 rounded-lg p-2 w-full"
                 required
               />
@@ -163,9 +181,13 @@ const RegisterServiceForm = () => {
               className={`w-full py-2 bg-blue-500 text-white rounded-lg font-nunito hover:bg-blue-600 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               disabled={loading}
             >
-              {loading ? 'Cargando...' : 'Registrar Servicio'}
+              {loading ? 'Cargando...' : 'Registrar Compra'}
             </button>
           </form>
+        </div>
+
+        <div className="flex justify-center">
+          <InfoCard phone={serviceData.phone} totalServices={serviceData.totalServices} />
         </div>
       </div>
     </div>
