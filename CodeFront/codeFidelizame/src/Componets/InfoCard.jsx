@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { FaFacebook, FaInstagram, FaTiktok, FaWhatsapp } from 'react-icons/fa';
 import html2canvas from 'html2canvas'; // Para capturar la tarjeta como imagen
-import fondo from '../assets/bono.png';
+import fondo from '../assets/probandoCard.png';
 
 const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
     const userInfo = useSelector((state) => state.userInfo);
@@ -83,15 +83,15 @@ const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
                 />
                 {/* Información del comercio y cliente */}
                 <div className="relative z-10 flex flex-col items-start text-left p-4 h-full">
-                    <div className="flex items-center mb-4">
+                    <div className="flex items-center mb-2">
                         <img
                             src={userInfo.images[0]}
                             alt="User Profile"
-                            className="h-16 w-16 rounded-full border-2 border-slate-400"
+                            className="h-16 w-16 rounded-full border-1 border-slate-700 "
                         />
-                        <h2 className="text-xl text-white font-nunito font-semibold ml-4 uppercase">{userInfo.name}</h2>
+                        <h2 className="text-xl text-slate-700 font-nunito font-semibold ml-4 uppercase">{userInfo.name}</h2>
                     </div>
-                    <div className='flex-grow my-1'>
+                    <div className='flex-grow '>
                         <p className="text-gray-700 font-nunito text-sm font-semibold rounded-md p-1">Cliente: {phone}</p>
                         <p className="text-gray-700 font-nunito text-sm font-semibold rounded-md p-1">Bono N°: {totalServices}</p>
                     </div>
@@ -99,8 +99,8 @@ const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
                     {/* Texto de bonificación */}
                     {bonificado && (
                         <div className="mb-0">
-                            <p className="text-white font-nunito uppercase font-semibold">¡Servicio bonificado!</p>
-                            <p className="text-white font-nunito uppercase">{bonificacion}</p>
+                            <p className="text-teal-700 font-nunito uppercase font-semibold">¡Servicio bonificado!</p>
+                            <p className="text-teal-700 font-semibold   text-center font-nunito uppercase p-2  ">{bonificacion}</p>
                         </div>
                     )}
     
@@ -109,22 +109,22 @@ const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
                         <div className="flex flex-col">
                             <a href={userInfo.facebook} target="_blank" rel="noopener noreferrer" className="flex items-center mb-1">
                                 <FaFacebook className="h-4 w-4 text-blue-600 mr-2" />
-                                <p className="text-gray-700 text-sm">{userInfo.facebook}</p>
+                                <p className="text-gray-700 font-semibold font-nunito text-sm">{userInfo.facebook}</p>
                             </a>
                             <a href={userInfo.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center">
                                 <FaInstagram className="h-4 w-4 text-pink-600 mr-2" />
-                                <p className="text-gray-700 text-sm">{userInfo.instagram}</p>
+                                <p className="text-gray-700 font-semibold font-nunito  text-sm">{userInfo.instagram}</p>
                             </a>
                         </div>
     
                         <div className="flex flex-col">
                             <a href={userInfo.tiktok} target="_blank" rel="noopener noreferrer" className="flex items-center mb-1">
                                 <FaTiktok className="h-4 w-4 text-black mr-2" />
-                                <p className="text-gray-700 text-sm">{userInfo.tiktok}</p>
+                                <p className="text-gray-700 font-semibold font-nunito text-sm">{userInfo.tiktok}</p>
                             </a>
                             <a href={userInfo.whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center">
                                 <FaWhatsapp className="h-4 w-4 text-green-600 mr-2" />
-                                <p className="text-gray-700 text-sm">{userInfo.whatsapp}</p>
+                                <p className="text-gray-700 font-semibold font-nunito text-sm">{userInfo.whatsapp}</p>
                             </a>
                         </div>
                     </div>
