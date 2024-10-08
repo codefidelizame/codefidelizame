@@ -2,7 +2,7 @@ const { Comercio, Client, Service, Receipt } = require('../../data');  // Import
 
 exports.registerServiceForClient = async (req, res) => {
   const comercioId = req.comercioId;   // Supone que tienes autenticación del comercio (userId)
-  const { clientId, serviceName, price, serviceDate } = req.body; // Datos del servicio
+  const { clientId, serviceName, price, serviceDate, bonificado,bonificacion } = req.body; // Datos del servicio
 
   try {
     // Verificar si el cliente existe
@@ -23,8 +23,11 @@ exports.registerServiceForClient = async (req, res) => {
     const newService = await Service.create({
       serviceName,
       price,
+      serviceDate,
       clientId: client.id,
-      comercioId: comercio.id, // Asegurarte de asignar el comercioId aquí
+      comercioId: comercio.id,
+      bonificado: bonificado || false, 
+      bonificacion:bonificado ? bonificacion : null,
     });
 
     // 3. Generar recibo por el servicio
@@ -36,26 +39,20 @@ exports.registerServiceForClient = async (req, res) => {
 
     // 4. Incrementar la cantidad de servicios del cliente
     client.totalServices += 1;
-
-    // 5. Bonificar el siguiente servicio si llega a 5
-    // Bonificar el siguiente servicio si llega a 5
-    if (client.totalServices % 5 === 0) {
-      newService.bonificado = true; // Marcar el servicio como bonificado
-      await newService.save(); // Guardar el cambio en la base de datos
-    }
-
-    // Guardar los cambios en el cliente
     await client.save();
 
     // Responder con el servicio y recibo generados
     res.status(201).json({
       message: 'Servicio registrado exitosamente',
       service: newService,
+      price: newService.price,
+      bonificado: newService.bonificado,
+      bonificacion:newService.bonificacion,
       receipt,
       client: {
         id: client.id,
         totalServices: client.totalServices,
-        bonificado: newService.bonificado,
+        
       }
     });
 

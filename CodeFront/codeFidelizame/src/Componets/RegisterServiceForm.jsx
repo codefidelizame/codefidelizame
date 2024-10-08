@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerService, fetchClients } from '../Redux/Actions/actions';
 import { toast } from 'react-toastify'; // Asegúrate de importar toast
@@ -15,8 +15,10 @@ const RegisterServiceForm = () => {
     serviceName: '',
     price: '',
     serviceDate: new Date().toISOString().split('T')[0],
+    bonificado: false, 
+    bonificacion: ''
   });
- 
+
   const dispatch = useDispatch();
   const clients = useSelector((state) => state.clients);
   const userInfo = useSelector((state) => state.userInfo);
@@ -77,10 +79,10 @@ const RegisterServiceForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Esperar el registro del servicio
     await dispatch(registerService(serviceData));
-  
+
     // Actualizar totalServices solo si el cliente existe
     const client = clients.find((c) => c.id === serviceData.clientId);
     if (client) {
@@ -90,10 +92,10 @@ const RegisterServiceForm = () => {
         totalServices: updatedTotalServices,
       }));
     }
-  
+
     toast.success('Servicio registrado exitosamente');
   };
-  
+
   const handleLogout = () => {
     navigate('/');
   };
@@ -176,6 +178,34 @@ const RegisterServiceForm = () => {
                 required
               />
             </div>
+            <div className="mb-4">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="bonificado"
+                  checked={serviceData.bonificado}
+                  onChange={(e) => setServiceData({ ...serviceData, bonificado: e.target.checked })}
+                  className="mr-2"
+                />
+                Bonificado
+              </label>
+            </div>
+            {serviceData.bonificado && (
+              <div className="mb-4">
+                <label htmlFor="bonificacion" className="block text-sm font-medium text-gray-700">
+                  Tipo de Bonificación
+                </label>
+                <textarea
+                  id="bonificacion"
+                  name="bonificacion"
+                  rows="3"
+                  className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                  placeholder="Describe la bonificación que se otorga"
+                  value={serviceData.bonificacion}
+                  onChange={(e) => setServiceData({ ...serviceData, bonificacion: e.target.value })}
+                />
+              </div>
+            )}
             <button
               type="submit"
               className={`w-full py-2 bg-blue-500 text-white rounded-lg font-nunito hover:bg-blue-600 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -187,7 +217,8 @@ const RegisterServiceForm = () => {
         </div>
 
         <div className="flex justify-center">
-          <InfoCard phone={serviceData.phone} totalServices={serviceData.totalServices} />
+          <InfoCard phone={serviceData.phone} totalServices={serviceData.totalServices} bonificado={serviceData.bonificado} 
+            bonificacion={serviceData.bonificacion}  />
         </div>
       </div>
     </div>

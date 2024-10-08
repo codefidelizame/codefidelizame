@@ -46,7 +46,7 @@ const AdminPanel = () => {
             className="h-16 w-16 rounded-full mr-4"
           />
           <h1 className="text-3xl font-bold font-nunito text-gray-700">
-            Bienvenid@, {userInfo?.name || 'Administrador'}!
+            {userInfo?.name || 'Administrador'}
           </h1>
         </div>
 

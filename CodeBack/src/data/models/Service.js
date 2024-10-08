@@ -20,6 +20,10 @@ module.exports = (sequelize) => {
         defaultValue: false
 
       },
+      bonificacion: { 
+        type: DataTypes.STRING, 
+        allowNull: true,
+      },
       deletedAt: {
         type: DataTypes.DATE,
         allowNull: true,

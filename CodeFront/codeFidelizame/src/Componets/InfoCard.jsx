@@ -4,11 +4,17 @@ import { FaFacebook, FaInstagram, FaTiktok, FaWhatsapp } from 'react-icons/fa';
 import html2canvas from 'html2canvas'; // Para capturar la tarjeta como imagen
 import fondo from '../assets/bono.png';
 
-const InfoCard = ({ phone, totalServices }) => {
+const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
   const userInfo = useSelector((state) => state.userInfo);
   console.log(userInfo)
   const cardRef = useRef(null); // Ref para el componente de la tarjeta
-
+  console.log("Props recibidas en InfoCard:", {
+    phone,
+    totalServices,
+    bonificado,
+    bonificacion,
+    userInfo
+  });
   const handleWhatsAppShare = () => {
     // Captura la tarjeta como imagen
     html2canvas(cardRef.current).then((canvas) => {
@@ -59,15 +65,21 @@ const InfoCard = ({ phone, totalServices }) => {
         <div className="relative z-10 flex flex-col items-start text-left p-4">
           <div className="flex items-center mb-4">
             <img
-              src={userInfo.profilePicture} // Imagen de usuario
+              src={userInfo.images} // Imagen de usuario
               alt="User Profile"
               className="h-16 w-16 rounded-full border-2 border-slate-400"
             />
             <h2 className="text-xl text-white font-nunito font-semibold ml-4 uppercase">{userInfo.name}</h2>
           </div>
 
-          <p className="text-gray-700 font-nunito text-sm mt-2 bg-slate-50 rounded-md p-1">Cliente Tel: {phone}</p>
-          <p className="text-gray-700 font-nunito text-sm mt-2 bg-slate-50 rounded-md p-1">Bono N°: {totalServices}</p>
+          <p className="text-gray-700 font-nunito text-sm mt-2 font-semibold rounded-md p-1">Cliente Tel: {phone}</p>
+          <p className="text-gray-700 font-nunito text-sm mt-2 font-semibold rounded-md p-1">Bono N°: {totalServices}</p>
+          {bonificado && (
+  <div>
+    <p className="text-green-500">¡Servicio bonificado!</p>
+    <p>Descripción de la bonificación: {bonificacion}</p>
+  </div>
+)}
 
    {/* Redes sociales organizadas en dos columnas */}
 <div className="flex flex-wrap justify-between mt-6 text-sm space-x-2">
