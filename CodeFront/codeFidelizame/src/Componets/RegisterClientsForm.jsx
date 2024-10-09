@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerClient, logout } from '../Redux/Actions/actions';
-import Logo from '../assets/code.png'; // Importa tu logo
+import Logo from '../assets/code.png'; 
 import { FaSignOutAlt } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const RegisterClientForm = () => {
   const [clientData, setClientData] = useState({
@@ -15,6 +16,7 @@ const RegisterClientForm = () => {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.loading);
   const error = useSelector((state) => state.error);
+  const success = useSelector((state) => state.success); // Asegúrate de tener este estado en tu reducer
   const userInfo = useSelector((state) => state.userInfo);
   const token = useSelector((state) => state.token);
   const navigate = useNavigate();
@@ -29,27 +31,36 @@ const RegisterClientForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!userInfo && !token) {
-      alert('Debes iniciar sesión para registrar un cliente.'); // O redirige a la página de inicio de sesión
+      alert('Debes iniciar sesión para registrar un cliente.');
       return;
     }
-    dispatch(registerClient(clientData)); // Llama a la acción para registrar el cliente
+    dispatch(registerClient(clientData));
   };
 
+  // Mostrar toast si el cliente se registra con éxito y redirigir a "/panel"
+  useEffect(() => {
+    if (success) {
+      toast.success('Cliente registrado exitosamente');
+      navigate('/panel'); // Redirige a la página del panel
+    } else if (error) {
+      toast.error(error); // Muestra el error si lo hay
+    }
+  }, [success, error, navigate]);
+
   const handleLogout = () => {
-    dispatch(logout()); // Llama a la acción de logout
-    navigate('/'); // Redirige a la página de inicio después de cerrar sesión
+    dispatch(logout());
+    navigate('/');
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-400">
       {/* Navbar que ocupa todo el ancho de la pantalla */}
       <div className="flex justify-between items-center p-4 bg-white shadow-md">
-      <nav className="w-full flex justify-start items-center py-4 px-8 bg-transparent">
-        <Link to="/" className="text-white text-xl font-bold cursor-pointer flex items-center">
-          <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
-          
-        </Link>
-      </nav>
+        <nav className="w-full flex justify-start items-center py-4 px-8 bg-transparent">
+          <Link to="/" className="text-white text-xl font-bold cursor-pointer flex items-center">
+            <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
+          </Link>
+        </nav>
         <Link to="/panel" className="text-gray-200 font-nunito bg-blue-500 py-2 px-4 mr-8 rounded-lg">
           PANEL
         </Link>
@@ -64,7 +75,6 @@ const RegisterClientForm = () => {
       <div className="flex items-center justify-center flex-grow">
         <div className="bg-white p-6 rounded-lg shadow-lg w-96">
           <h2 className="text-2xl font-bold mb-4 font-nunito">Registro de Cliente</h2>
-          {error && <div className="text-red-500 mb-4">{error}</div>}
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700 mb-2 font-nunito">Nombre</label>

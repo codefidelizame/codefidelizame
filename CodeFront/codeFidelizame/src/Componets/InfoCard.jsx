@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { FaFacebook, FaInstagram, FaTiktok, FaWhatsapp } from 'react-icons/fa';
 import html2canvas from 'html2canvas'; // Para capturar la tarjeta como imagen
 import fondo from '../assets/probandoCard.png';
+import defaulImage from '../assets/code.png'
+
 
 const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
     const userInfo = useSelector((state) => state.userInfo);
@@ -85,7 +87,7 @@ const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
                 <div className="relative z-10 flex flex-col items-start text-left p-4 h-full">
                     <div className="flex items-center mb-2">
                         <img
-                            src={userInfo.images[0]}
+                            src={userInfo.images[0] || defaulImage}
                             alt="User Profile"
                             className="h-16 w-16 rounded-full border-1 border-slate-700 "
                         />

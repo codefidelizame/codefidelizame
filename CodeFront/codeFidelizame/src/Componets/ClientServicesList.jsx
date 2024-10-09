@@ -1,31 +1,38 @@
-// ClientServicesList.jsx
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchClientServices } from '../Redux/Actions/actions';;
+// // ClientServicesList.jsx
+// import React, { useEffect } from 'react';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { fetchClientServices } from '../Redux/Actions/actions';
 
-const ClientServicesList = ({ clientId }) => {
-  const dispatch = useDispatch();
-  const { loading, clientServices, error } = useSelector((state) => state.service);
+// const ClientServicesList = ({ clientId }) => {
+//   const dispatch = useDispatch();
+//   const  clientServices = useSelector((state) => state.service);
+//   const  loading  = useSelector((state) => state.loading);
+//   const  error  = useSelector((state) => state.error);
+//   useEffect(() => {
+//     if (clientId) {
+//       dispatch(fetchClientServices(clientId));
+//     }
+//   }, [dispatch, clientId]);
 
-  useEffect(() => {
-    dispatch(fetchClientServices(clientId));
-  }, [dispatch, clientId]);
+//   return (
+//     <div>
+//       {loading ? (
+//         <p>Cargando servicios...</p>
+//       ) : error ? (
+//         <p>Error: {error}</p>
+//       ) : clientServices.length > 0 ? (
+//         <ul>
+//           {clientServices.map((service) => (
+//             <li key={service.id}>
+//               {service.serviceName} - ${service.price}
+//             </li>
+//           ))}
+//         </ul>
+//       ) : (
+//         <p>No se encontraron servicios para este cliente.</p>
+//       )}
+//     </div>
+//   );
+// };
 
-  return (
-    <div>
-      {loading ? (
-        <p>Cargando servicios...</p>
-      ) : error ? (
-        <p>Error: {error}</p>
-      ) : (
-        <ul>
-          {clientServices.map((service) => (
-            <li key={service.id}>{service.serviceName} - ${service.price}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-};
-
-export default ClientServicesList;
+// export default ClientServicesList;

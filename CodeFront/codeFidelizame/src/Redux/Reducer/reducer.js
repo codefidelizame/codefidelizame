@@ -44,6 +44,7 @@ import {
     client: null,
     clients: [],
     comercios:[],
+    success: false,
   };
   
   
@@ -117,7 +118,7 @@ import {
           return {
             ...state,
             loading: false,
-            clientServices: action.payload,
+            clientServices: action.payload.services,
           };
         case FETCH_CLIENT_SERVICES_FAILURE:
           return {
@@ -148,6 +149,7 @@ import {
             return {
               ...state,
               loading: true,
+              success: false,
               error: null,
             };
           case REGISTER_CLIENT_SUCCESS:
@@ -155,12 +157,14 @@ import {
               ...state,
               loading: false,
               client: action.payload,
+              success: true,
               error: null,
             };
           case REGISTER_CLIENT_FAILURE:
             return {
               ...state,
               loading: false,
+              success: false,
               error: action.payload,
             };
             case FETCH_CLIENTS_REQUEST:

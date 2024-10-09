@@ -1,4 +1,4 @@
-const { Service } = require('../../data');
+const { Service, Client, Comercio } = require('../../data');
 
 // Obtener servicios por cliente
 exports.getServicesByClient = async (req, res) => {
@@ -7,7 +7,7 @@ exports.getServicesByClient = async (req, res) => {
     try {
         const services = await Service.findAll({
             where: { clientId },
-            include: [{ model: Client }, { model: Comercio }],
+            include: [{ model: Client, attributes: ['name', 'email', 'phone'] }, { model: Comercio }],
         });
 
         if (!services.length) {

@@ -120,21 +120,46 @@ export const registerService = (serviceData) => async (dispatch) => {
 };
 
 
-// Obtener servicios por cliente
 export const fetchClientServices = (clientId) => async (dispatch) => {
   try {
     dispatch({ type: FETCH_CLIENT_SERVICES_REQUEST });
 
-    const response = await axios.get(`${BASE_URL}/services/client/${clientId}`);
+    // Obtener el token del localStorage
+    const token = localStorage.getItem('token');
 
-    dispatch({ type: FETCH_CLIENT_SERVICES_SUCCESS, payload: response.data });
+    // Configurar los headers para incluir el token
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    // Llamada a la API
+    const response = await axios.get(`${BASE_URL}/services/client/${clientId}`, config);
+
+    console.log('Response data from API:', response.data);
+
+    // Si la respuesta está vacía (puede depender de cómo esté configurado el backend)
+    if (response.status === 404 || response.data.length === 0) {
+      dispatch({ type: FETCH_CLIENT_SERVICES_SUCCESS, payload: [] });
+    } else {
+      dispatch({ type: FETCH_CLIENT_SERVICES_SUCCESS, payload: response.data });
+    }
   } catch (error) {
-    dispatch({
-      type: FETCH_CLIENT_SERVICES_FAILURE,
-      payload: error.response ? error.response.data.message : error.message,
-    });
+    if (error.response && error.response.status === 404) {
+      // Manejar 404 como un caso en el que no hay servicios en lugar de un error
+      dispatch({ type: FETCH_CLIENT_SERVICES_SUCCESS, payload: [] });
+    } else {
+      console.log('Error fetching client services:', error.response ? error.response.data.message : error.message);
+
+      dispatch({
+        type: FETCH_CLIENT_SERVICES_FAILURE,
+        payload: error.response ? error.response.data.message : error.message,
+      });
+    }
   }
 };
+
 
 // Obtener todos los servicios
 export const fetchAllServices = () => async (dispatch) => {
@@ -196,9 +221,6 @@ export const fetchClients = () => async (dispatch, getState) => {
 
     // Realizar la solicitud GET a la API de clientes
     const response = await axios.get(`${BASE_URL}/clientes`, config);
-
-    // Imprimir la respuesta completa para depuración
-    console.log('Response:', response);
 
     const { clients } = response.data;
 

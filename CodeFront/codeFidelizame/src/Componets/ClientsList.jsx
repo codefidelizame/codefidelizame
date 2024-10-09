@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchClients, deleteClient, editClient} from '../Redux/Actions/actions';
+import { fetchClients, deleteClient, editClient, fetchClientServices } from '../Redux/Actions/actions';
 import { AiOutlineEdit, AiFillDelete } from 'react-icons/ai';
 import Logo from '../assets/code.png'; 
-import { Link , useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaSignOutAlt } from 'react-icons/fa'; 
 
 const ClientsList = () => {
@@ -14,8 +14,9 @@ const ClientsList = () => {
   const loading = useSelector((state) => state.loading);
   const clients = useSelector((state) => state.clients);
   const userInfo = useSelector((state) => state.userInfo);
-
-  // Estado para saber qué cliente está en modo de edición
+  const clientServices = useSelector((state) => state.clientServices); // Asegúrate de tener este selector en tu estado
+  console.log(clientServices)
+  const [selectedClientId, setSelectedClientId] = useState(null); // Para el cliente seleccionado
   const [editClientId, setEditClientId] = useState(null);
   const [editFormData, setEditFormData] = useState({
     name: '',
@@ -31,6 +32,12 @@ const ClientsList = () => {
       dispatch(fetchClients());
     }
   }, [dispatch, userInfo, updated]);
+
+  useEffect(() => {
+    if (selectedClientId) {
+      dispatch(fetchClientServices(selectedClientId));
+    }
+  }, [selectedClientId, dispatch]);
 
   const handleDelete = (clientId) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
@@ -60,15 +67,20 @@ const ClientsList = () => {
   const handleSaveClick = () => {
     dispatch(editClient(editClientId, editFormData))
       .then(() => {
-        setEditClientId(null); // Sal del modo edición
+        setEditClientId(null);
         setUpdated(!updated);
       })
       .catch((error) => {
         console.error("Error actualizando cliente:", error);
       });
   };
+
   const handleLogout = () => {
     navigate('/'); 
+  };
+
+  const handleClientSelect = (clientId) => {
+    setSelectedClientId(clientId);
   };
 
   if (loading) return <p>Cargando...</p>;
@@ -76,25 +88,26 @@ const ClientsList = () => {
 
   return (
     <div className="container mx-auto p-4">
-    <nav className="w-full flex justify-between items-center py-4 px-8 bg-gray-200 text-gray-700">
-      {/* Logo */}
-      <Link to="/" className="flex items-center">
-        <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
-      </Link>
+      <nav className="w-full flex justify-between items-center py-4 px-8 bg-gray-200 text-gray-700">
+        {/* Logo */}
+        <Link to="/" className="flex items-center">
+          <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
+        </Link>
 
-      {/* Botón de Panel */}
-      <Link
-        to="/panel"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        PANEL
-      </Link>
+        {/* Botón de Panel */}
+        <Link
+          to="/panel"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          PANEL
+        </Link>
 
-      {/* Botón de Logout */}
-      <button onClick={handleLogout} className="text-gray-700 hover:text-red-500">
-        <FaSignOutAlt className="h-6 w-6" />
-      </button>
-    </nav>
+        {/* Botón de Logout */}
+        <button onClick={handleLogout} className="text-gray-700 hover:text-red-500">
+          <FaSignOutAlt className="h-6 w-6" />
+        </button>
+      </nav>
+
       <h1 className="text-2xl font-bold mb-4">Lista de Clientes</h1>
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
@@ -165,6 +178,7 @@ const ClientsList = () => {
                     <button onClick={() => handleDelete(client.id)}>
                       <AiFillDelete className="w-5 h-5 text-red-600" />
                     </button>
+                    <button onClick={() => handleClientSelect(client.id)} className="text-gray-600">Seleccionar</button>
                   </td>
                 </>
               )}
@@ -172,9 +186,45 @@ const ClientsList = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Detalles del cliente seleccionado */}
+      {selectedClientId && (
+  <div className="mt-8">
+    <h2 className="text-xl font-bold">Compras del Cliente Seleccionado</h2>
+
+    {/* Verificar que clientServices esté definido y sea un array */}
+    {Array.isArray(clientServices) && clientServices.length === 0 ? (
+      <p className="text-red-500">Este cliente no tiene servicios asociados</p>
+    ) : Array.isArray(clientServices) ? (
+      <table className="min-w-full bg-white border border-gray-200 mt-4">
+        <thead>
+          <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+            <th className="py-3 px-6 text-left">Servicio</th>
+            <th className="py-3 px-6 text-left">Precio</th>
+            <th className="py-3 px-6 text-left">Bonificado</th>
+            <th className="py-3 px-6 text-left">Bonificación</th>
+          </tr>
+        </thead>
+        <tbody className="text-gray-600 text-sm font-light">
+          {clientServices.map((service) => (
+            <tr key={service.id} className="border-b border-gray-200 hover:bg-gray-100">
+              <td className="py-3 px-6">{service.serviceName}</td>
+              <td className="py-3 px-6">{service.price}</td>
+              <td className="py-3 px-6">{service.bonificado ? 'Sí' : 'No'}</td>
+              <td className="py-3 px-6">{service.bonificacion ? service.bonificacion : '-'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    ) : (
+      <p className="text-red-500">Este cliente no tiene Compras realizadas.</p>
+    )}
+  </div>
+)}
+
     </div>
-   
   );
 };
 
 export default ClientsList;
+
