@@ -2,7 +2,7 @@ const { Comercio, Client, Service, Receipt } = require('../../data');  // Import
 
 exports.registerServiceForClient = async (req, res) => {
   const comercioId = req.comercioId;   // Supone que tienes autenticación del comercio (userId)
-  const { clientId, serviceName, price, serviceDate, bonificado,bonificacion } = req.body; // Datos del servicio
+  const { clientId, serviceName, price, serviceDate, bonificado,bonificacion, imageUrl } = req.body; // Datos del servicio
 
   try {
     // Verificar si el cliente existe
@@ -28,6 +28,7 @@ exports.registerServiceForClient = async (req, res) => {
       comercioId: comercio.id,
       bonificado: bonificado || false, 
       bonificacion:bonificado ? bonificacion : null,
+      imageUrl: imageUrl || null,
     });
 
     // 3. Generar recibo por el servicio
@@ -48,6 +49,7 @@ exports.registerServiceForClient = async (req, res) => {
       price: newService.price,
       bonificado: newService.bonificado,
       bonificacion:newService.bonificacion,
+      imageUrl: newService.imageUrl,
       receipt,
       client: {
         id: client.id,

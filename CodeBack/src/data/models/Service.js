@@ -24,6 +24,10 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING, 
         allowNull: true,
       },
+      imageUrl: { 
+        type: DataTypes.STRING, 
+        allowNull: true,
+      },
       deletedAt: {
         type: DataTypes.DATE,
         allowNull: true,
