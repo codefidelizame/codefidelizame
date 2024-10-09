@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaSignOutAlt } from 'react-icons/fa'; // Importa el ícono de logout
 import Logo from '../assets/code.png'; // Importa tu logo
 import { logout } from '../Redux/Actions/actions'; // Asegúrate de que esta sea la ruta correcta a tu acción
-
+import DefaultAvatar from '../assets/codess.png'
 const AdminPanel = () => {
   const userInfo = useSelector((state) => state.userInfo);
   console.log(userInfo)
@@ -41,7 +41,7 @@ const AdminPanel = () => {
         {/* Mensaje de bienvenida y imagen del usuario */}
         <div className="flex items-center mb-6">
           <img
-            src={userInfo?.images[0]} // Usar la primera imagen del array
+            src={userInfo?.images[0] || DefaultAvatar} // Usar la primera imagen del array
             alt="User Avatar"
             className="h-16 w-16 rounded-full mr-4"
           />
