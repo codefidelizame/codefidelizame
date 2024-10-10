@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { FaFacebook, FaInstagram, FaTiktok, FaWhatsapp } from 'react-icons/fa';
 import html2canvas from 'html2canvas'; // Para capturar la tarjeta como imagen
-import fondo from '../assets/probandoCard.png';
+import fondo from '../assets/fondo.png';
 import defaulImage from '../assets/code.png'
 
 
