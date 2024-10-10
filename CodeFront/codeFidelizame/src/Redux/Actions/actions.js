@@ -33,7 +33,13 @@ import {
   EDIT_CLIENT_FAIL,
   FETCH_COMERCIOS_REQUEST,
   FETCH_COMERCIOS_SUCCESS,
-  FETCH_COMERCIOS_FAIL
+  FETCH_COMERCIOS_FAIL,
+  DELETE_COMERCIO_REQUEST, 
+  DELETE_COMERCIO_SUCCESS, 
+  DELETE_COMERCIO_FAILURE, 
+  UPDATE_COMERCIO_REQUEST, 
+  UPDATE_COMERCIO_SUCCESS, 
+  UPDATE_COMERCIO_FAILURE 
 } from './actions-type';
 
 // Acción para registrar un nuevo Comercio
@@ -346,3 +352,53 @@ console.log('Token:', token);
   }
 };
 
+
+export const deleteComercio = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: DELETE_COMERCIO_REQUEST });
+
+    const token = localStorage.getItem('token') || getState().userLogin.token; // Asegurarse de que el token del usuario esté presente
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    await axios.delete(`${BASE_URL}/auth/comercios/${id}`, config); // Llamada a la API para eliminar
+
+    dispatch({ type: DELETE_COMERCIO_SUCCESS, payload: id }); // Pasamos el id para poder eliminarlo en el reducer
+  } catch (error) {
+    dispatch({
+      type: DELETE_COMERCIO_FAILURE,
+      payload: error.response && error.response.data.message 
+        ? error.response.data.message 
+        : error.message,
+    });
+  }
+};
+
+// actions/comercioActions.js
+export const updateComercio = (id, updatedData) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: UPDATE_COMERCIO_REQUEST });
+
+    const token = localStorage.getItem('token') || getState().userLogin.token;
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.put(`${BASE_URL}/auth/comercios/${id}`, updatedData, config); // Llamada a la API para actualizar
+
+    dispatch({ type: UPDATE_COMERCIO_SUCCESS, payload: data }); // Mandar los datos actualizados
+  } catch (error) {
+    dispatch({
+      type: UPDATE_COMERCIO_FAILURE,
+      payload: error.response && error.response.data.message 
+        ? error.response.data.message 
+        : error.message,
+    });
+  }
+};

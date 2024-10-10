@@ -86,3 +86,58 @@ exports.getAllComercios = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener comercios', error: error.message });
   }
 };
+
+// Eliminar un comercio por ID
+exports.deleteComercio = async (req, res) => {
+  const { id } = req.params;  // Obtener el ID del comercio desde los parámetros de la URL
+
+  try {
+    const comercio = await Comercio.findByPk(id);  // Buscar el comercio por ID en la base de datos
+    if (!comercio) {
+      return res.status(404).json({ message: 'Comercio no encontrado' });  // Si no se encuentra, devuelve un 404
+    }
+
+    await comercio.destroy();  // Eliminar el comercio de la base de datos
+    res.status(200).json({ message: 'Comercio eliminado con éxito' });
+  } catch (error) {
+    console.error('Error al eliminar comercio:', error);  // Log del error en la consola
+    res.status(500).json({ message: 'Error al eliminar comercio', error: error.message });
+  }
+};
+
+
+// Actualizar un comercio por ID
+exports.updateComercio = async (req, res) => {
+  const { id } = req.params;  // Obtener el ID del comercio desde los parámetros de la URL
+  const { name, email, password, role, images, instagram, facebook, tiktok, whatsapp } = req.body;  // Campos a actualizar
+
+  try {
+    const comercio = await Comercio.findByPk(id);  // Buscar el comercio por ID
+    if (!comercio) {
+      return res.status(404).json({ message: 'Comercio no encontrado' });  // Si no se encuentra, devuelve un 404
+    }
+
+    // Si la contraseña es proporcionada, la hasheamos antes de actualizar
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);  // Hasheamos la nueva contraseña
+      comercio.password = hashedPassword;
+    }
+
+    // Actualizar los demás campos del comercio
+    comercio.name = name || comercio.name;
+    comercio.email = email || comercio.email;
+    comercio.role = role || comercio.role;
+    comercio.images = images || comercio.images;
+    comercio.instagram = instagram || comercio.instagram;
+    comercio.facebook = facebook || comercio.facebook;
+    comercio.tiktok = tiktok || comercio.tiktok;
+    comercio.whatsapp = whatsapp || comercio.whatsapp;
+
+    await comercio.save();  // Guardar los cambios en la base de datos
+
+    res.status(200).json({ message: 'Comercio actualizado con éxito', comercio });
+  } catch (error) {
+    console.error('Error al actualizar comercio:', error);  // Log del error en la consola
+    res.status(500).json({ message: 'Error al actualizar comercio', error: error.message });
+  }
+};

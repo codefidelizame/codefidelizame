@@ -26,7 +26,13 @@ import {
     EDIT_CLIENT_SUCCESS,
     FETCH_COMERCIOS_REQUEST,
     FETCH_COMERCIOS_SUCCESS,
-    FETCH_COMERCIOS_FAIL
+    FETCH_COMERCIOS_FAIL,
+    DELETE_COMERCIO_REQUEST, 
+    DELETE_COMERCIO_SUCCESS, 
+    DELETE_COMERCIO_FAILURE, 
+    UPDATE_COMERCIO_REQUEST, 
+    UPDATE_COMERCIO_SUCCESS, 
+    UPDATE_COMERCIO_FAILURE
   
   } from '../Actions/actions-type'
 
@@ -213,6 +219,29 @@ import {
                     loading: false,
                     error: action.payload, // Guardar el mensaje de error
                   };
+                  case DELETE_COMERCIO_REQUEST:
+                    case UPDATE_COMERCIO_REQUEST:
+                      return { ...state, loading: true };
+                
+                    case DELETE_COMERCIO_SUCCESS:
+                      return {
+                        ...state,
+                        loading: false,
+                        comercios: state.comercios.filter(comercio => comercio.id !== action.payload),  // Remover comercio eliminado
+                      };
+                
+                    case UPDATE_COMERCIO_SUCCESS:
+                      return {
+                        ...state,
+                        loading: false,
+                        comercios: state.comercios.map(comercio =>
+                          comercio.id === action.payload.id ? action.payload : comercio  // Actualizar comercio
+                        ),
+                      };
+                
+                    case DELETE_COMERCIO_FAILURE:
+                    case UPDATE_COMERCIO_FAILURE:
+                      return { ...state, loading: false, error: action.payload };
     
       default:
         return state;

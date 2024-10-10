@@ -14,7 +14,7 @@ const authMiddleware = (req, res, next) => {
 
     // Asignar el userId al request
     req.comercioId = verified.id;  // Asegúrate de que "id" es el campo correcto
-    
+    req.role = verified.role;
     next();
   } catch (error) {
     res.status(400).json({ message: 'Token inválido' });

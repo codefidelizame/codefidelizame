@@ -73,7 +73,7 @@ const Register = () => {
       <div className="flex items-center justify-center flex-grow">
         <div className="bg-white p-6 rounded-lg shadow-lg w-96">
           <h2 className="text-2xl font-bold mb-4 font-nunito">Registro de Nuevo Comercio</h2>
-          {error && <div className="text-red-500 mb-4">{error}</div>}
+          {error && <div className="text-red-500 mb-4 ">{error}</div>}
           <form onSubmit={handleSubmit}>
             {/* Campos para Nombre, Email y Contraseña */}
             <div className="mb-4">
