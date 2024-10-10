@@ -53,7 +53,7 @@ const Register = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-400">
       {/* Navbar que ocupa todo el ancho de la pantalla */}
-      <div className="flex justify-between items-center p-4 bg-white shadow-md">
+      <div className="flex justify-between items-center  bg-white shadow-md">
         <nav className="w-full flex justify-start items-center py-4 px-8 bg-transparent">
           <Link to="/" className="text-white text-xl font-bold cursor-pointer flex items-center">
             <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
@@ -70,7 +70,7 @@ const Register = () => {
       </div>
 
       {/* Contenedor del formulario de registro */}
-      <div className="flex items-center justify-center flex-grow">
+      <div className="flex items-center justify-center flex-grow md: mt-2 mb-2">
         <div className="bg-white p-6 rounded-lg shadow-lg w-96">
           <h2 className="text-2xl font-bold mb-4 font-nunito">Registro de Nuevo Comercio</h2>
           {error && <div className="text-red-500 mb-4 ">{error}</div>}

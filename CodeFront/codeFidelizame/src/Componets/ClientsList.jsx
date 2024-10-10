@@ -87,7 +87,7 @@ const ClientsList = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-2">
       <nav className="w-full flex justify-between items-center py-4 px-8 bg-gray-200 text-gray-700">
         {/* Logo */}
         <Link to="/" className="flex items-center">

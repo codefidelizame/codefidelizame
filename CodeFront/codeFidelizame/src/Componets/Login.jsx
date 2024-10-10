@@ -49,10 +49,10 @@ const Login = () => {
         </Link>
       </nav>
 
-      <div className="flex items-center justify-center flex-grow">
+      <div className="flex items-center justify-center flex-grow md: m-8">
         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl flex flex-col md:flex-row items-center justify-between">
           {/* Imagen que se mostrará solo en pantallas medianas o más grandes */}
-          <div className="hidden md:block w-1/2">
+          <div className="hidden md:block w-1/2 ">
             <img src={LoginImage} alt="Login" className="object-cover h-full w-full rounded-md p-4" />
           </div>
 

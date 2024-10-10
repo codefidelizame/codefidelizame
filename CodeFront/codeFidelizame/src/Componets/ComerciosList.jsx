@@ -69,9 +69,9 @@ const ComerciosList = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-400">
-      <nav className="w-full flex justify-between items-center p-4 bg-white shadow-md">
+      <nav className="w-full flex justify-between items-center  bg-white shadow-md">
         <Link to="/" className="text-black text-xl font-bold flex items-center">
-          <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
+          <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full md: ml-2" />
         </Link>
         <Link
           to="/panel"
@@ -80,11 +80,11 @@ const ComerciosList = () => {
           PANEL
         </Link>
         <button onClick={handleLogout} className="text-gray-700 hover:text-red-500">
-          <FaSignOutAlt className="h-6 w-6" />
+          <FaSignOutAlt className="h-6 w-6 md: mr-2" />
         </button>
       </nav>
 
-      <div className="flex items-center justify-center flex-grow">
+      <div className="flex items-center justify-center flex-grow md: p-4">
         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-7xl"> {/* Modificado el tamaño */}
           <h2 className="text-2xl font-bold font-nunito mb-4">Comercios</h2>
           {error && <div className="text-red-500 mb-4">{error}</div>}

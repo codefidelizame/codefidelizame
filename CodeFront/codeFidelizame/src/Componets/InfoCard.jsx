@@ -75,7 +75,7 @@ const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
     };
 
     return (
-        <div className="rounded-lg shadow-lg p-2 w-96 relative bg-white overflow-hidden">
+        <div className="rounded-lg shadow-lg p-2 w-96 relative bg-white overflow-hidden ">
             <div ref={cardRef} className="relative">
                 {/* Imagen de fondo */}
                 <img

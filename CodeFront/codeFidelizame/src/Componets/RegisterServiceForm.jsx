@@ -216,7 +216,7 @@ const RegisterServiceForm = () => {
           </form>
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center ">
           <InfoCard phone={serviceData.phone} totalServices={serviceData.totalServices} bonificado={serviceData.bonificado} 
             bonificacion={serviceData.bonificacion}  />
         </div>
