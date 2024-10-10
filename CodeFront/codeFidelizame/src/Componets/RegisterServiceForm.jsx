@@ -79,11 +79,13 @@ const RegisterServiceForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Esperar el registro del servicio
+  
+    // Registrar el servicio y esperar a que la acción se complete
     await dispatch(registerService(serviceData));
-
-    // Actualizar totalServices solo si el cliente existe
+  
+    // Volver a solicitar la lista actualizada de clientes después de registrar el servicio
+    await dispatch(fetchClients());
+  
     const client = clients.find((c) => c.id === serviceData.clientId);
     if (client) {
       const updatedTotalServices = client.totalServices + 1; // Incrementar el total de servicios
@@ -92,9 +94,10 @@ const RegisterServiceForm = () => {
         totalServices: updatedTotalServices,
       }));
     }
-
+  
     toast.success('Servicio registrado exitosamente');
   };
+  
 
   const handleLogout = () => {
     navigate('/');
