@@ -2,7 +2,7 @@ import React from 'react';
 import { FaSignInAlt } from 'react-icons/fa'; // Importamos el ícono
 import { Link } from 'react-router-dom'; // Importamos Link para la navegación
 import Logo from '../assets/code.png';
-import Gif from '../assets/Gif6.png';
+import Gif from '../assets/landing.png';
 
 const Landing = () => {
   return (
