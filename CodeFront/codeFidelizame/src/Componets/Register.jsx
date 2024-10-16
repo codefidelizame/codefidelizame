@@ -22,6 +22,10 @@ const Register = () => {
     facebook: '',
     tiktok: '',
     whatsapp: '',
+    initDate: '',
+    endDate: '',
+    active: true
+    
   });
 
   const handleImageUpload = () => {
@@ -40,9 +44,21 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Datos a enviar:', userData); 
-    dispatch(register(userData));
-
+  
+    // Validar si las fechas están presentes antes de convertir
+    const formattedInitDate = userData.initDate ? new Date(userData.initDate).toISOString() : null;
+    const formattedEndDate = userData.endDate ? new Date(userData.endDate).toISOString() : null;
+  
+    // Crear el objeto con las fechas formateadas solo si son válidas
+    const dataToSend = {
+      ...userData,
+      initDate: formattedInitDate,
+      endDate: formattedEndDate,
+    };
+  
+    console.log('Datos a enviar:', dataToSend);
+    dispatch(register(dataToSend));
+  
     // Redirigir después de crear comercio
     window.alert('Comercio creado con éxito');
     navigate('/panel');
@@ -167,6 +183,27 @@ const Register = () => {
                 className="border border-gray-300 rounded-lg p-2 w-full"
               />
             </div>
+            <div>
+              <label className="block text-gray-700 mb-2 font-nunito">Inicio Suscripción</label>
+              <input
+                type="date"
+                name="initDate"
+                value={userData.initDate}
+                onChange={handleChange}
+                className="border border-gray-300 rounded-lg p-2 w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-2 font-nunito">Fin Suscripción</label>
+              <input
+                type="date"
+                name="endDate"
+                value={userData.endDate}
+                onChange={handleChange}
+                className="border border-gray-300 rounded-lg p-2 w-full"
+              />
+            </div>
+
             <div className="col-span-2">
               <button
                 type="submit"
