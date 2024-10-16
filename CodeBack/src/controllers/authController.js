@@ -145,7 +145,7 @@ exports.updateComercio = async (req, res) => {
     comercio.whatsapp = whatsapp || comercio.whatsapp;
     comercio.initDate = initDate || comercio.initDate;
     comercio.endDate = endDate || comercio.endDate
-    comercio.active = active || comercio.active
+    comercio.active = active 
 
     await comercio.save();  // Guardar los cambios en la base de datos
 

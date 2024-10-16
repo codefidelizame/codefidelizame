@@ -67,6 +67,7 @@ const ComerciosList = () => {
       ...updatedData,
       initDate: new Date(updatedData.initDate).toISOString(),
       endDate: new Date(updatedData.endDate).toISOString(),
+      active: updatedData.active
     };
     dispatch(updateComercio(id, updatedDataWithISO))
     
