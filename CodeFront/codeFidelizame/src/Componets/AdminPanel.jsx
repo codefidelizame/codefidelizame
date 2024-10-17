@@ -9,7 +9,7 @@ import DefaultAvatar from '../assets/codess.png'
 
 const AdminPanel = () => {
   const userInfo = useSelector((state) => state.userInfo);
-  console.log(userInfo)
+ 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
