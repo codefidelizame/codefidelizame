@@ -5,7 +5,9 @@ require('dotenv').config();  // Para usar las variables de entorno
 
 // Registrar un Comercio
 exports.register = async (req, res) => {
-    const { name, email, password, role, images, instagram, facebook, tiktok, whatsapp} = req.body;
+    const { name, email, password, role, images, instagram, facebook, tiktok, whatsapp, initDate,
+      endDate,
+      active} = req.body;
   
 
   
@@ -24,7 +26,10 @@ exports.register = async (req, res) => {
         instagram,
         facebook,
         tiktok,
-        whatsapp
+        whatsapp,
+        initDate,
+        endDate,
+        active
       });
       console.log('Admin creado:', newAdmin);
   
@@ -68,7 +73,11 @@ exports.login = async (req, res) => {
         instagram:admin.instagram,
         facebook:admin.facebook,
         tiktok:admin.tiktok,
-        whatsapp:admin.whatsapp
+        whatsapp:admin.whatsapp,
+        initDate:admin.initDate,
+        endDate:admin.endDate,
+        active:admin.active
+
       },
     });
   } catch (error) {
@@ -109,7 +118,9 @@ exports.deleteComercio = async (req, res) => {
 // Actualizar un comercio por ID
 exports.updateComercio = async (req, res) => {
   const { id } = req.params;  // Obtener el ID del comercio desde los parámetros de la URL
-  const { name, email, password, role, images, instagram, facebook, tiktok, whatsapp } = req.body;  // Campos a actualizar
+  const { name, email, password, role, images, instagram, facebook, tiktok, whatsapp, initDate,
+    endDate,
+    active } = req.body;  // Campos a actualizar
 
   try {
     const comercio = await Comercio.findByPk(id);  // Buscar el comercio por ID
@@ -132,6 +143,9 @@ exports.updateComercio = async (req, res) => {
     comercio.facebook = facebook || comercio.facebook;
     comercio.tiktok = tiktok || comercio.tiktok;
     comercio.whatsapp = whatsapp || comercio.whatsapp;
+    comercio.initDate = initDate || comercio.initDate;
+    comercio.endDate = endDate || comercio.endDate
+    comercio.active = active 
 
     await comercio.save();  // Guardar los cambios en la base de datos
 
