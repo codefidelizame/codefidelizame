@@ -13,6 +13,7 @@ const Login = () => {
   const loading = useSelector((state) => state.loading);
   const error = useSelector((state) => state.error);
   const userInfo = useSelector((state) => state.userInfo);
+  console.log(userInfo)
 
   const [credentials, setCredentials] = useState({
     email: '',

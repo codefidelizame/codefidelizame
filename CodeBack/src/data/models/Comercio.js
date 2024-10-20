@@ -8,18 +8,7 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      initDate: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        allowNull: true,
-
-      },
-      endDate: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        allowNull: true,
-      },
-
+      
       email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -66,11 +55,7 @@ module.exports = (sequelize) => {
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
-      active: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
-      },
+     
     },
     {
       paranoid: true,
