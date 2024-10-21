@@ -6,13 +6,13 @@ exports.registerClient = async (req, res) => {
 
   try {
     // Buscar si el cliente ya existe en la base de datos, incluyendo eliminados
-    let client = await Client.findOne({ where: { email }, paranoid: false });
+    let client = await Client.findOne({ where: { phone }, paranoid: false });
 
     if (client) {
       // Si el cliente existe y está eliminado, lo restauramos
       if (client.deletedAt) {
         client.name = name; // Actualizar el nombre si es necesario
-        client.phone = phone; // Actualizar el teléfono si es necesario
+        client.email = email; // Actualizar el teléfono si es necesario
         client.deletedAt = null; // Restaurar el cliente eliminando el valor de deletedAt
         await client.save(); // Guardar los cambios en el cliente restaurado
 
