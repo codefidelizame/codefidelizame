@@ -43,7 +43,9 @@ import {
   UPDATE_SUBSCRIPTION_REQUEST,
   UPDATE_SUBSCRIPTION_SUCCESS,
   UPDATE_SUBSCRIPTION_FAIL,
-  CREATE_SUBSCRIPTION
+  CREATE_SUBSCRIPTION,
+  PASSWORD_RESET_REQUEST_SUCCESS,
+  PASSWORD_RESET_REQUEST_FAIL
 
 } from './actions-type';
 
@@ -427,5 +429,14 @@ export const createSubscription = (subscriptionData) => {
       throw error; // Propaga el error si es necesario
     }
   };
+};
+
+export const requestPasswordReset = (email) => async (dispatch) => {
+  try {
+    await axios.post(`${BASE_URL}/auth/request-password-reset`, { email });
+    dispatch({ type: PASSWORD_RESET_REQUEST_SUCCESS });
+  } catch (error) {
+    dispatch({ type: PASSWORD_RESET_REQUEST_FAIL, payload: error.message });
+  }
 };
 

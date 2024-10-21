@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Comercio, Subscription } = require("../data"); // Modelo de administrador
 require("dotenv").config(); // Para usar las variables de entorno
+const nodemailer = require("nodemailer"); 
 
 // Registrar un Comercio
 exports.register = async (req, res) => {
@@ -205,3 +206,80 @@ exports.updateComercio = async (req, res) => {
   }
 };
 
+const transporter = nodemailer.createTransport({
+  service: "Gmail", // O cualquier otro servicio de correo
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+// Solicitar recuperación de contraseña
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Buscar el usuario por correo
+    const admin = await Comercio.findOne({ where: { email } });
+
+    if (!admin) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Crear un token de recuperación con una expiración de 15 minutos
+    const resetToken = jwt.sign(
+      { id: admin.id },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "15m" }
+    );
+
+    // Configurar el contenido del correo electrónico
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: admin.email,
+      subject: "Recuperación de contraseña",
+      text: `Hola ${admin.name}, haz clic en el siguiente enlace para restablecer tu contraseña: 
+      ${process.env.FRONTEND_URL}/reset-password/${resetToken}`,
+    };
+
+    // Enviar el correo electrónico
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: "Correo de recuperación enviado" });
+  } catch (error) {
+    console.error("Error al solicitar recuperación:", error);
+    res.status(500).json({ message: "Error al solicitar recuperación", error: error.message });
+  }
+};
+
+// Restablecer contraseña
+exports.resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    // Verificar el token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+    // Buscar el usuario por ID
+    const admin = await Comercio.findByPk(decoded.id);
+    if (!admin) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Hashear la nueva contraseña
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Actualizar la contraseña
+    admin.password = hashedPassword;
+    await admin.save();
+
+    res.status(200).json({ message: "Contraseña restablecida con éxito" });
+  } catch (error) {
+    console.error("Error al restablecer contraseña:", error);
+    if (error.name === "TokenExpiredError") {
+      return res.status(400).json({ message: "El token ha expirado" });
+    }
+    res.status(500).json({ message: "Error al restablecer contraseña", error: error.message });
+  }
+};
