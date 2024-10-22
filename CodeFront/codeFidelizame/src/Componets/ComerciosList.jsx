@@ -137,6 +137,8 @@ const ComerciosList = () => {
         <thead>
           <tr>
             <th className="px-4 py-2 border">Nombre</th>
+            <th className="px-4 py-2 border">Email</th>
+            <th className="px-4 py-2 border">Teléfono</th>
             <th className="px-4 py-2 border">Redes Sociales</th>
             <th className="px-4 py-2 border">Suscripciones</th>
             <th className="px-4 py-2 border">Acciones</th>
@@ -156,6 +158,32 @@ const ComerciosList = () => {
                   />
                 ) : (
                   comercio.name
+                )}
+              </td>
+              <td className="px-4 py-2 border">
+                {editingComercio === comercio.id ? (
+                  <input
+                    type="text"
+                    name="email"
+                    value={updatedData.email}
+                    onChange={handleInputChange}
+                    className="border p-1"
+                  />
+                ) : (
+                  comercio.email
+                )}
+              </td>
+              <td className="px-4 py-2 border">
+                {editingComercio === comercio.id ? (
+                  <input
+                    type="text"
+                    name="whatsapp"
+                    value={updatedData.whatsapp}
+                    onChange={handleInputChange}
+                    className="border p-1"
+                  />
+                ) : (
+                  comercio.whatsapp
                 )}
               </td>
               <td className="px-4 py-2 border">
@@ -250,7 +278,7 @@ const ComerciosList = () => {
                     </label>
                     <button
                       onClick={() => handleCreateSubscription(comercio.id)} // Pasa el ID del comercio al crear la suscripción
-                      className="bg-green-500 text-white px-4 py-1 mt-2"
+                      className= "bg-blue-500 text-white rounded-lg font-nunito hover:bg-blue-600 px-4 py-1 mt-2"
                     >
                       <FiPlus /> Agregar
                     </button>
@@ -271,7 +299,7 @@ const ComerciosList = () => {
                     <FiSave /> Guardar
                   </button>
                 ) : (
-                  <button onClick={() => handleEdit(comercio)} className="bg-yellow-500 text-white px-4 py-1">
+                  <button onClick={() => handleEdit(comercio)} className=" bg-blue-500 text-white rounded-lg font-nunito hover:bg-blue-600 px-4 py-1">
                     <FiEdit /> Editar
                   </button>
                 )}

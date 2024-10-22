@@ -22,6 +22,7 @@ import {
   REGISTER_CLIENT_REQUEST,
   REGISTER_CLIENT_SUCCESS,
   REGISTER_CLIENT_FAILURE,
+  RESET_REGISTER_CLIENT,
   FETCH_CLIENTS_REQUEST, 
   FETCH_CLIENTS_SUCCESS, 
   FETCH_CLIENTS_FAIL,
@@ -44,8 +45,8 @@ import {
   UPDATE_SUBSCRIPTION_SUCCESS,
   UPDATE_SUBSCRIPTION_FAIL,
   CREATE_SUBSCRIPTION,
-  PASSWORD_RESET_REQUEST_SUCCESS,
-  PASSWORD_RESET_REQUEST_FAIL
+  PASSWORD_RESET_EMAIL_SENT,
+  PASSWORD_RESET_EMAIL_FAILED
 
 } from './actions-type';
 
@@ -202,6 +203,12 @@ export const registerClient = (clientData) => async (dispatch, getState) => {
       type: REGISTER_CLIENT_SUCCESS,
       payload: response.data,
     });
+
+    // Reiniciar el estado de registro después de un tiempo
+    setTimeout(() => {
+      dispatch({ type: RESET_REGISTER_CLIENT });
+    }, 2000); // Puedes ajustar el tiempo como lo necesites
+
   } catch (error) {
     console.error('Error en el registro del cliente:', error); // Verifica el error
     dispatch({
@@ -210,6 +217,7 @@ export const registerClient = (clientData) => async (dispatch, getState) => {
     });
   }
 };
+
 
 export const fetchClients = () => async (dispatch, getState) => {
   dispatch({ type: FETCH_CLIENTS_REQUEST });
@@ -431,12 +439,22 @@ export const createSubscription = (subscriptionData) => {
   };
 };
 
-export const requestPasswordReset = (email) => async (dispatch) => {
+export const sendPasswordResetEmail = (email) => async (dispatch) => {
   try {
-    await axios.post(`${BASE_URL}/auth/request-password-reset`, { email });
-    dispatch({ type: PASSWORD_RESET_REQUEST_SUCCESS });
+    // Hacer la solicitud POST a la ruta correspondiente
+    const response = await axios.post(`${BASE_URL}/auth/password-reset`, { email });
+
+    // Aquí puedes manejar la respuesta, por ejemplo:
+    dispatch({
+      type: PASSWORD_RESET_EMAIL_SENT,
+      payload: response.data, // Suponiendo que el backend devuelve algún mensaje
+    });
   } catch (error) {
-    dispatch({ type: PASSWORD_RESET_REQUEST_FAIL, payload: error.message });
+    // Manejo de errores
+    dispatch({
+      type: PASSWORD_RESET_EMAIL_FAILED,
+      payload: error.response.data.message || 'Error al enviar el correo',
+    });
   }
 };
 

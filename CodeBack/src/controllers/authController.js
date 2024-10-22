@@ -1,8 +1,11 @@
+const crypto = require('crypto');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const transporter = require('../nodemailer');
 const { Comercio, Subscription } = require("../data"); // Modelo de administrador
 require("dotenv").config(); // Para usar las variables de entorno
-const nodemailer = require("nodemailer"); 
+const { Op } = require('sequelize');
+ 
 
 // Registrar un Comercio
 exports.register = async (req, res) => {
@@ -57,7 +60,7 @@ exports.login = async (req, res) => {
 
   try {
     // Buscar el usuario en la base de datos por email
-    const admin = await Comercio.findOne({ where: { email } });
+    const admin = await Comercio.findOne({  where: { email: email.toLowerCase() } });
     console.log("Usuario encontrado:", admin); // Log del usuario encontrado
 
     if (!admin) {
@@ -206,80 +209,87 @@ exports.updateComercio = async (req, res) => {
   }
 };
 
-const transporter = nodemailer.createTransport({
-  service: "Gmail", // O cualquier otro servicio de correo
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-// Solicitar recuperación de contraseña
-exports.forgotPassword = async (req, res) => {
+exports.sendPasswordResetEmail = async (req, res) => {
   const { email } = req.body;
 
   try {
-    // Buscar el usuario por correo
-    const admin = await Comercio.findOne({ where: { email } });
+    const comercio = await Comercio.findOne({ where: { email: email.toLowerCase() } });
 
-    if (!admin) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+    if (!comercio) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    // Crear un token de recuperación con una expiración de 15 minutos
-    const resetToken = jwt.sign(
-      { id: admin.id },
-      process.env.JWT_SECRET_KEY,
-      { expiresIn: "15m" }
-    );
+    // Generar token de restablecimiento
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpiry = Date.now() + 48 * 60 * 60 * 1000; // Token válido por 1 hora
 
-    // Configurar el contenido del correo electrónico
+    // Guardar el token y su expiración en el usuario
+    comercio.resetPasswordToken = resetToken;
+    comercio.resetPasswordExpires = resetTokenExpiry;
+    await comercio.save();
+
+    // Enviar el correo
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
     const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: admin.email,
-      subject: "Recuperación de contraseña",
-      text: `Hola ${admin.name}, haz clic en el siguiente enlace para restablecer tu contraseña: 
-      ${process.env.FRONTEND_URL}/reset-password/${resetToken}`,
+      from: process.env.SMTP_USER,
+      to: email,
+      subject: 'Solicitud de restablecimiento de contraseña',
+      html: `<p>Has solicitado un cambio de contraseña. Haz clic en el siguiente enlace para restablecerla:</p>
+             <a href="${resetUrl}">${resetUrl}</a>
+             <p>Este enlace será válido por 48 horas.</p>`,
     };
 
-    // Enviar el correo electrónico
+    // Envía el correo
     await transporter.sendMail(mailOptions);
 
-    res.status(200).json({ message: "Correo de recuperación enviado" });
+    res.status(200).json({ message: 'Correo de restablecimiento de contraseña enviado con éxito' });
   } catch (error) {
-    console.error("Error al solicitar recuperación:", error);
-    res.status(500).json({ message: "Error al solicitar recuperación", error: error.message });
+    console.error(error); // Agrega un log de error para ver detalles
+    res.status(500).json({ message: 'Error al enviar el correo de restablecimiento', error });
   }
 };
 
-// Restablecer contraseña
+
+
+
+
 exports.resetPassword = async (req, res) => {
-  const { token } = req.params;
-  const { newPassword } = req.body;
+  const { token, newPassword } = req.body;
+
+  console.log('Token recibido:', token);
+  console.log('Nueva contraseña recibida:', newPassword);
 
   try {
-    // Verificar el token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const comercio = await Comercio.findOne({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: { [Op.gt]: Date.now() },  // Verificar que no haya expirado
+      },
+    });
 
-    // Buscar el usuario por ID
-    const admin = await Comercio.findByPk(decoded.id);
-    if (!admin) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+    console.log('Comercio encontrado:', comercio);
+
+    if (!comercio) {
+      console.log('Token inválido o expirado');
+      return res.status(400).json({ message: 'Token inválido o expirado' });
     }
 
-    // Hashear la nueva contraseña
+    // Encriptar la nueva contraseña
     const hashedPassword = await bcrypt.hash(newPassword, 10);
+    console.log('Contraseña encriptada:', hashedPassword);
 
-    // Actualizar la contraseña
-    admin.password = hashedPassword;
-    await admin.save();
+    comercio.password = hashedPassword;
 
-    res.status(200).json({ message: "Contraseña restablecida con éxito" });
+    // Limpiar el token y la fecha de expiración
+    comercio.resetPasswordToken = null;
+    comercio.resetPasswordExpires = null;
+
+    await comercio.save();
+    console.log('Contraseña actualizada correctamente');
+
+    res.status(200).json({ message: 'Contraseña cambiada con éxito' });
   } catch (error) {
-    console.error("Error al restablecer contraseña:", error);
-    if (error.name === "TokenExpiredError") {
-      return res.status(400).json({ message: "El token ha expirado" });
-    }
-    res.status(500).json({ message: "Error al restablecer contraseña", error: error.message });
+    console.error('Error al cambiar la contraseña:', error);
+    res.status(500).json({ message: 'Error al cambiar la contraseña', error });
   }
 };

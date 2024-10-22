@@ -19,6 +19,7 @@ import {
   REGISTER_CLIENT_REQUEST,
   REGISTER_CLIENT_SUCCESS,
   REGISTER_CLIENT_FAILURE,
+  RESET_REGISTER_CLIENT,
   FETCH_CLIENTS_REQUEST,
   FETCH_CLIENTS_SUCCESS,
   FETCH_CLIENTS_FAIL,
@@ -37,6 +38,7 @@ import {
   UPDATE_SUBSCRIPTION_SUCCESS,
   UPDATE_SUBSCRIPTION_FAIL,
   CREATE_SUBSCRIPTION,
+ 
 } from "../Actions/actions-type";
 
 const initialState = {
@@ -53,6 +55,7 @@ const initialState = {
   comercios: [],
   subscriptions: [],
   success: false,
+  
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -159,21 +162,34 @@ const rootReducer = (state = initialState, action) => {
         success: false,
         error: null,
       };
-    case REGISTER_CLIENT_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        client: action.payload,
-        success: true,
-        error: null,
-      };
-    case REGISTER_CLIENT_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        success: false,
-        error: action.payload,
-      };
+      case REGISTER_CLIENT_REQUEST:
+        return {
+          ...state,
+          loading: true,
+          success: false,
+          error: null,
+        };
+      case REGISTER_CLIENT_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          client: action.payload,
+          success: true,
+          error: null,
+        };
+      case REGISTER_CLIENT_FAILURE:
+        return {
+          ...state,
+          loading: false,
+          success: false,
+          error: action.payload,
+        };
+      case RESET_REGISTER_CLIENT:
+        return {
+          ...state,
+          success: false,  
+          client: null,    
+        };
     case FETCH_CLIENTS_REQUEST:
       return {
         ...state,
@@ -251,6 +267,8 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         subscriptions: [...state.subscriptions, action.payload], // Agrega la nueva suscripción
       };
+      
+      
 
     default:
       return state;

@@ -41,11 +41,17 @@ const RegisterClientForm = () => {
   useEffect(() => {
     if (success) {
       toast.success('Cliente registrado exitosamente');
-      navigate('/panel'); // Redirige a la página del panel
+      setClientData({
+        name: '',
+        email: '',
+        phone: '',
+      });
+      dispatch({ type: 'RESET_REGISTER_CLIENT' });
     } else if (error) {
       toast.error(error); // Muestra el error si lo hay
     }
-  }, [success, error, navigate]);
+  }, [success, error, navigate, dispatch]);
+  
 
   const handleLogout = () => {
     dispatch(logout());

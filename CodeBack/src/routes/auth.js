@@ -6,7 +6,7 @@ const {
   getComercioById, 
   deleteComercio, 
   updateComercio,
-  forgotPassword,  
+  sendPasswordResetEmail,  
   resetPassword          
 } = require('../controllers/authController');
 const router = express.Router();
@@ -21,7 +21,7 @@ router.get('/comercios/:id', getComercioById);
 router.delete('/comercios/:id', authMiddleware, adminMiddleware, deleteComercio);
 router.put('/comercios/:id', authMiddleware, adminMiddleware, updateComercio);
 
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password/:token', resetPassword);
+router.post('/password-reset', sendPasswordResetEmail);
+router.post('/reset-password', resetPassword);
 
 module.exports = router;
