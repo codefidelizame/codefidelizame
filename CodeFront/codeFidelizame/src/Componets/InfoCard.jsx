@@ -75,7 +75,7 @@ const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
             <div ref={cardRef} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg mx-auto" style={{ backgroundImage: `url(${selectedFondo})`, backgroundSize: 'cover' }}>
                 {/* Logo y Nombre en una línea */}
                 <div className="flex items-center justify-center mb-4">
-                    <img src={defaulImage} alt="User Profile" className="h-24 w-24 rounded-full mr-4" />
+                    <img  src={userInfo.images[0] || defaulImage} alt="User Profile" className="h-24 w-24 rounded-full mr-4" />
                     <h2 className="text-3xl font-bold font-nunito uppercase text-center">{userInfo?.name}</h2>
                 </div>
 
