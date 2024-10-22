@@ -60,7 +60,7 @@ exports.login = async (req, res) => {
 
   try {
     // Buscar el usuario en la base de datos por email
-    const admin = await Comercio.findOne({  where: { email: email.toLowerCase() } });
+    const admin = await Comercio.findOne({  where: { email} });
     console.log("Usuario encontrado:", admin); // Log del usuario encontrado
 
     if (!admin) {
