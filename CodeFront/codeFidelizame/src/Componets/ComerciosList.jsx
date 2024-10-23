@@ -162,7 +162,7 @@ const ComerciosList = () => {
             <th  className="py-3 px-6 text-left">Acciones</th>
           </tr>
         </thead>
-        <tbody className="text-gray-600 font-nunito font-semibold text-sm font-light">
+        <tbody className="text-gray-600 font-nunito font-semibold text-sm ">
           {comercios.map((comercio) => (
             <tr key={comercio.id} className="border-b border-gray-200 hover:bg-gray-100">
               <td className="py-3 px-6">
