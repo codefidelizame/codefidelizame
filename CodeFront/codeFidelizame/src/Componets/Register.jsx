@@ -7,10 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { openCloudinaryWidget } from '../cloudinaryConfig';
 
 const Register = () => {
-  const dispatch = useDispatch();
-  const loading = useSelector((state) => state.loading);
-  const error = useSelector((state) => state.error);
-  const navigate = useNavigate();
+  
 
   const [userData, setUserData] = useState({
     name: '',
@@ -25,6 +22,12 @@ const Register = () => {
    
     
   });
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.loading);
+  const userInfo = useSelector((state) => state.userInfo);
+  console.log(userInfo)
+  const error = useSelector((state) => state.error);
+  const navigate = useNavigate();
 
   const handleImageUpload = () => {
     openCloudinaryWidget((uploadedImageUrl) => {
@@ -40,25 +43,29 @@ const Register = () => {
     setUserData({ ...userData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Validar si las fechas están presentes antes de convertir
-   
+    // Crear el objeto con los datos del comercio a enviar
+    const dataToSend = { ...userData };
   
-    // Crear el objeto con las fechas formateadas solo si son válidas
-    const dataToSend = {
-      ...userData,
-     
-    };
-  
-    console.log('Datos a enviar:', dataToSend);
-    dispatch(register(dataToSend));
-  
-    // Redirigir después de crear comercio
-    window.alert('Comercio creado con éxito');
-    navigate('/panel');
+    try {
+      console.log('Datos a enviar:', dataToSend);
+      
+      // Despachar la acción de registro
+      await dispatch(register(dataToSend));
+      
+      // Verificar si hay un error después de la acción
+      if (!error) {
+        window.alert('Comercio creado con éxito');
+        navigate('/panel');
+      }
+    } catch (err) {
+      console.error('Error al crear el comercio:', err);
+      window.alert('Hubo un error al crear el comercio. Inténtalo de nuevo.');
+    }
   };
+  
 
   const handleLogout = () => {
     dispatch(logout()); 

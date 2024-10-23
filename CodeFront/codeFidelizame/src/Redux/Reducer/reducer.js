@@ -71,15 +71,14 @@ const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        userInfo: action.payload, // Admin registrado
         error: null,
       };
     case LOGIN_SUCCESS:
       return {
         ...state,
         loading: false,
-        userInfo: action.payload.user, // Asegúrate de que este campo exista en la respuesta
-        token: action.payload.token, // Guardar el token
+        userInfo: action.payload.user, 
+        token: action.payload.token, 
         loggedIn: true,
         error: null,
       };

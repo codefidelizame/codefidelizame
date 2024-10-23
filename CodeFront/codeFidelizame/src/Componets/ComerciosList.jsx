@@ -4,13 +4,14 @@ import {
   fetchComercios,
   updateComercio,
   updateSubscription,
-  createSubscription, // Asegúrate de importar la acción para crear suscripciones
+  createSubscription,
 } from "../Redux/Actions/actions";
 import { Link, useNavigate } from "react-router-dom";
-import { FiEdit, FiTrash, FiSave, FiPlus } from "react-icons/fi"; // Añade el icono para agregar
+import { FiEdit, FiTrash, FiSave, FiPlus } from "react-icons/fi";
 import { FaSignOutAlt } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Logo from '../assets/code.png';
 
 const ComerciosList = () => {
   const dispatch = useDispatch();
@@ -125,68 +126,85 @@ const ComerciosList = () => {
   };
 
   return (
-    <div className="container mx-auto mt-5">
-      <ToastContainer />
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Lista de Comercios</h2>
-        <button onClick={handleLogout} className="text-red-500 hover:text-red-700 font-bold">
-          <FaSignOutAlt /> Cerrar sesión
+    <div className="container mx-auto p-2">
+      <nav className="w-full flex justify-between items-center py-4 px-8 bg-gray-200 text-gray-700">
+        {/* Logo */}
+        <Link to="/" className="flex items-center">
+          <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
+        </Link>
+
+        {/* Botón de Panel */}
+        <Link
+          to="/panel"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          PANEL
+        </Link>
+
+        {/* Botón de Logout */}
+        <button onClick={handleLogout} className="text-gray-700 hover:text-red-500">
+          <FaSignOutAlt className="h-6 w-6" />
         </button>
-      </div>
-      <table className="min-w-full bg-white border">
+      </nav>
+      <ToastContainer />
+
+
+
+
+      <table className="min-w-full bg-white border border-gray-200">
         <thead>
           <tr>
-            <th className="px-4 py-2 border">Nombre</th>
-            <th className="px-4 py-2 border">Email</th>
-            <th className="px-4 py-2 border">Teléfono</th>
-            <th className="px-4 py-2 border">Redes Sociales</th>
-            <th className="px-4 py-2 border">Suscripciones</th>
-            <th className="px-4 py-2 border">Acciones</th>
+            <th  className="py-3 px-6 text-left">Nombre</th>
+            <th  className="py-3 px-6 text-left">Email</th>
+            <th  className="py-3 px-6 text-left">Teléfono</th>
+            <th  className="py-3 px-6 text-left">Redes Sociales</th>
+            <th  className="py-3 px-6 text-left">Suscripciones</th>
+            <th  className="py-3 px-6 text-left">Acciones</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-gray-600 font-nunito font-semibold text-sm font-light">
           {comercios.map((comercio) => (
-            <tr key={comercio.id}>
-              <td className="px-4 py-2 border">
+            <tr key={comercio.id} className="border-b border-gray-200 hover:bg-gray-100">
+              <td className="py-3 px-6">
                 {editingComercio === comercio.id ? (
                   <input
                     type="text"
                     name="name"
                     value={updatedData.name}
                     onChange={handleInputChange}
-                    className="border p-1"
+                    className="border p-1 rounded"
                   />
                 ) : (
                   comercio.name
                 )}
               </td>
-              <td className="px-4 py-2 border">
+              <td className="py-3 px-6">
                 {editingComercio === comercio.id ? (
                   <input
                     type="text"
                     name="email"
                     value={updatedData.email}
                     onChange={handleInputChange}
-                    className="border p-1"
+                    className="border p-1 rounded"
                   />
                 ) : (
                   comercio.email
                 )}
               </td>
-              <td className="px-4 py-2 border">
+              <td className="py-3 px-6">
                 {editingComercio === comercio.id ? (
                   <input
                     type="text"
                     name="whatsapp"
                     value={updatedData.whatsapp}
                     onChange={handleInputChange}
-                    className="border p-1"
+                    className="border p-1 rounded"
                   />
                 ) : (
                   comercio.whatsapp
                 )}
               </td>
-              <td className="px-4 py-2 border">
+              <td className="py-3 px-6">
                 {editingComercio === comercio.id ? (
                   <>
                     <input
@@ -195,7 +213,7 @@ const ComerciosList = () => {
                       value={updatedData.instagram}
                       onChange={handleInputChange}
                       placeholder="Instagram"
-                      className="border p-1 mb-1"
+                      className="border p-1 rounded"
                     />
                     <input
                       type="text"
@@ -203,7 +221,7 @@ const ComerciosList = () => {
                       value={updatedData.facebook}
                       onChange={handleInputChange}
                       placeholder="Facebook"
-                      className="border p-1 mb-1"
+                      className="py-3 px-6 rounded"
                     />
                     <input
                       type="text"
@@ -211,7 +229,7 @@ const ComerciosList = () => {
                       value={updatedData.tiktok}
                       onChange={handleInputChange}
                       placeholder="TikTok"
-                      className="border p-1"
+                      className="py-3 px-6 rounded "
                     />
                   </>
                 ) : (
@@ -278,7 +296,7 @@ const ComerciosList = () => {
                     </label>
                     <button
                       onClick={() => handleCreateSubscription(comercio.id)} // Pasa el ID del comercio al crear la suscripción
-                      className= "bg-blue-500 text-white rounded-lg font-nunito hover:bg-blue-600 px-4 py-1 mt-2"
+                      className="bg-blue-500 text-white rounded-lg font-nunito hover:bg-blue-600 px-4 py-1 mt-2"
                     >
                       <FiPlus /> Agregar
                     </button>
@@ -300,7 +318,7 @@ const ComerciosList = () => {
                   </button>
                 ) : (
                   <button onClick={() => handleEdit(comercio)} className=" bg-blue-500 text-white rounded-lg font-nunito hover:bg-blue-600 px-4 py-1">
-                    <FiEdit /> Editar
+                    <FiEdit /> 
                   </button>
                 )}
               </td>
