@@ -8,31 +8,18 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      initDate: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        allowNull: true,
-
-      },
-      endDate: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        allowNull: true,
-      },
-
       email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: false
-
+        allowNull: false,
       },
       role: {
         type: DataTypes.STRING,
-        defaultValue: 'comercio'
+        defaultValue: 'comercio',
       },
       images: {
         type: DataTypes.ARRAY(DataTypes.STRING),
@@ -55,7 +42,14 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-
+      resetPasswordToken: {
+        type: DataTypes.STRING,
+        allowNull: true, // Puede ser null hasta que se genere un token
+      },
+      resetPasswordExpires: {
+        type: DataTypes.DATE, // Almacena la fecha de expiración del token
+        allowNull: true,
+      },
       deletedAt: {
         type: DataTypes.DATE,
         allowNull: true,
@@ -66,14 +60,10 @@ module.exports = (sequelize) => {
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
-      active: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
-      },
     },
     {
       paranoid: true,
     }
   );
 };
+

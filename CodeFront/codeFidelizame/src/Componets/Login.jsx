@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../Redux/Actions/actions';
 import { useNavigate, Link } from 'react-router-dom';
@@ -13,6 +13,7 @@ const Login = () => {
   const loading = useSelector((state) => state.loading);
   const error = useSelector((state) => state.error);
   const userInfo = useSelector((state) => state.userInfo);
+  console.log(userInfo);
 
   const [credentials, setCredentials] = useState({
     email: '',
@@ -45,11 +46,10 @@ const Login = () => {
       <nav className="w-full flex justify-start items-center py-4 px-8 bg-transparent">
         <Link to="/" className="text-white text-xl font-bold cursor-pointer flex items-center">
           <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
-          
         </Link>
       </nav>
 
-      <div className="flex items-center justify-center flex-grow md: m-8">
+      <div className="flex items-center justify-center flex-grow md:m-8">
         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl flex flex-col md:flex-row items-center justify-between">
           {/* Imagen que se mostrará solo en pantallas medianas o más grandes */}
           <div className="hidden md:block w-1/2 ">
@@ -109,6 +109,13 @@ const Login = () => {
                 {loading ? 'Iniciando...' : 'Iniciar Sesión'}
               </button>
             </form>
+
+            {/* Enlace para recuperar la contraseña */}
+            <div className="mt-4 text-center">
+              <Link to="/PasswordReset" className="text-blue-500 hover:text-blue-700">
+                ¿Olvidaste tu contraseña? Recupérala aquí.
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -117,3 +124,4 @@ const Login = () => {
 };
 
 export default Login;
+

@@ -15,7 +15,6 @@ const ClientsList = () => {
   const clients = useSelector((state) => state.clients);
   const userInfo = useSelector((state) => state.userInfo);
   const clientServices = useSelector((state) => state.clientServices); // Asegúrate de tener este selector en tu estado
- 
   const [selectedClientId, setSelectedClientId] = useState(null); // Para el cliente seleccionado
   const [editClientId, setEditClientId] = useState(null);
   const [editFormData, setEditFormData] = useState({

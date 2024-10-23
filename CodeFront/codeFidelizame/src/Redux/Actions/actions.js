@@ -22,6 +22,7 @@ import {
   REGISTER_CLIENT_REQUEST,
   REGISTER_CLIENT_SUCCESS,
   REGISTER_CLIENT_FAILURE,
+  RESET_REGISTER_CLIENT,
   FETCH_CLIENTS_REQUEST, 
   FETCH_CLIENTS_SUCCESS, 
   FETCH_CLIENTS_FAIL,
@@ -39,7 +40,14 @@ import {
   DELETE_COMERCIO_FAILURE, 
   UPDATE_COMERCIO_REQUEST, 
   UPDATE_COMERCIO_SUCCESS, 
-  UPDATE_COMERCIO_FAILURE 
+  UPDATE_COMERCIO_FAILURE,
+  UPDATE_SUBSCRIPTION_REQUEST,
+  UPDATE_SUBSCRIPTION_SUCCESS,
+  UPDATE_SUBSCRIPTION_FAIL,
+  CREATE_SUBSCRIPTION,
+  PASSWORD_RESET_EMAIL_SENT,
+  PASSWORD_RESET_EMAIL_FAILED
+
 } from './actions-type';
 
 // Acción para registrar un nuevo Comercio
@@ -63,35 +71,28 @@ export const login = (credentials) => async (dispatch) => {
   dispatch({ type: LOGIN_REQUEST });
 
   try {
+    // Log de las credenciales enviadas
+    console.log('Credenciales enviadas:', credentials);
+
     const response = await axios.post(`${BASE_URL}/auth/login`, credentials);
-    const { user, token } = response.data; // Desestructuración de la respuesta
+    const { user, token } = response.data;
 
-    // Verifica la información recibida
-    console.log('Respuesta del servidor:', response.data); // Log de toda la respuesta
-    console.log('Usuario:', user); // Log solo del usuario
-    console.log('Token:', token); // Log solo del token
-// Guardar el token y la información del usuario en el localStorage
-localStorage.setItem('token', token);
-localStorage.setItem('userInfo', JSON.stringify(user)); // Convertimos a JSON para localStorage
+    localStorage.setItem('token', token);
+    localStorage.setItem('userInfo', JSON.stringify(user));
 
-    // Dispatch de la acción de éxito
     dispatch({
       type: LOGIN_SUCCESS,
       payload: { user, token },
     });
-
-    
-    // Verifica lo que se guarda en localStorage
-    console.log('Token guardado en localStorage:', token);
-    console.log('userInfo guardado en localStorage:', JSON.stringify(user)); // Log de userInfo guardado
   } catch (error) {
-    console.error('Error al iniciar sesión:', error); // Log del error
+    console.error('Error al iniciar sesión:', error);
     dispatch({
       type: LOGIN_FAILURE,
       payload: error.response?.data?.message || 'Error en el inicio de sesión',
     });
   }
 };
+
 
 // Acción para cerrar sesión (logout)
 export const logout = () => (dispatch) => {
@@ -202,6 +203,12 @@ export const registerClient = (clientData) => async (dispatch, getState) => {
       type: REGISTER_CLIENT_SUCCESS,
       payload: response.data,
     });
+
+    // Reiniciar el estado de registro después de un tiempo
+    setTimeout(() => {
+      dispatch({ type: RESET_REGISTER_CLIENT });
+    }, 2000); // Puedes ajustar el tiempo como lo necesites
+
   } catch (error) {
     console.error('Error en el registro del cliente:', error); // Verifica el error
     dispatch({
@@ -210,6 +217,7 @@ export const registerClient = (clientData) => async (dispatch, getState) => {
     });
   }
 };
+
 
 export const fetchClients = () => async (dispatch, getState) => {
   dispatch({ type: FETCH_CLIENTS_REQUEST });
@@ -308,20 +316,8 @@ export const fetchComercios = () => async (dispatch, getState) => {
   dispatch({ type: FETCH_COMERCIOS_REQUEST });
 
   try {
-    // Obtener el token almacenado en localStorage o desde el estado de Redux
-    const token = localStorage.getItem('token') || getState().userLogin.token;
-console.log('Token:', token);
-
-
-    // Configurar los encabezados de la solicitud para incluir el token
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`, // Enviar el token en el encabezado Authorization
-      },
-    };
-
-    // Realizar la solicitud GET a la API de comercios
-    const response = await axios.get(`${BASE_URL}/auth/comercios`, config);
+    
+    const response = await axios.get(`${BASE_URL}/auth/comercios` );
 
     // Imprimir la respuesta completa para depuración
     console.log('Response:', response);
@@ -402,3 +398,63 @@ export const updateComercio = (id, updatedData) => async (dispatch, getState) =>
     });
   }
 };
+
+export const updateSubscription = (comercioId, subscriptionId, updatedData) => async (dispatch) => {
+  dispatch({ type: UPDATE_SUBSCRIPTION_REQUEST });
+
+  try {
+    const response = await axios.put(`${BASE_URL}/subscription/comercio/${comercioId}/${subscriptionId}`, updatedData);
+
+    dispatch({
+      type: UPDATE_SUBSCRIPTION_SUCCESS,
+      payload: response.data.subscription, // Actualizar el estado con la suscripción modificada
+    });
+  } catch (error) {
+    console.error('Error al actualizar la suscripción:', error);
+
+    dispatch({
+      type: UPDATE_SUBSCRIPTION_FAIL,
+      payload: error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+};
+
+
+
+export const createSubscription = (subscriptionData) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/subscription`, subscriptionData);
+      dispatch({
+        type: CREATE_SUBSCRIPTION,
+        payload: response.data, // Puedes ajustar esto según lo que retorne tu API
+      });
+      return response.data; // Para usar en tu componente
+    } catch (error) {
+      console.error("Error creando la suscripción:", error);
+      throw error; // Propaga el error si es necesario
+    }
+  };
+};
+
+export const sendPasswordResetEmail = (email) => async (dispatch) => {
+  try {
+    // Hacer la solicitud POST a la ruta correspondiente
+    const response = await axios.post(`${BASE_URL}/auth/password-reset`, { email });
+
+    // Aquí puedes manejar la respuesta, por ejemplo:
+    dispatch({
+      type: PASSWORD_RESET_EMAIL_SENT,
+      payload: response.data, // Suponiendo que el backend devuelve algún mensaje
+    });
+  } catch (error) {
+    // Manejo de errores
+    dispatch({
+      type: PASSWORD_RESET_EMAIL_FAILED,
+      payload: error.response.data.message || 'Error al enviar el correo',
+    });
+  }
+};
+
