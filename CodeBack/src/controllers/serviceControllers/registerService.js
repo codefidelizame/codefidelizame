@@ -39,7 +39,11 @@ exports.registerServiceForClient = async (req, res) => {
     });
 
     // 4. Incrementar la cantidad de servicios del cliente
-    client.totalServices += 1;
+    if (newService.bonificado) {
+      client.totalServices = 0; // Reiniciar los servicios si es bonificado
+    } else {
+      client.totalServices += 1; // Incrementar si no es bonificado
+    }
     await client.save();
 
     // Responder con el servicio y recibo generados

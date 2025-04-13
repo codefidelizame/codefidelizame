@@ -52,7 +52,12 @@ const RegisterServiceForm = () => {
 
   // Verificar existencia del cliente
   const checkClientExistence = () => {
-    if (serviceData.phone && clients.length > 0) {
+    if (serviceData.phone.length < 10) {
+      // No hacer nada si el número de teléfono tiene menos de 10 dígitos
+      return;
+    }
+  
+    if (clients.length > 0) {
       const client = clients.find((c) => c.phone === serviceData.phone);
       if (client) {
         setServiceData((prevData) => ({
@@ -80,6 +85,12 @@ const RegisterServiceForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    // Verificar si el cliente existe
+    if (!serviceData.clientId) {
+      toast.error('El cliente no existe. Por favor, verifica el número de teléfono.');
+      return; // Detener el envío del formulario
+    }
+  
     // Registrar el servicio y esperar a que la acción se complete
     await dispatch(registerService(serviceData));
   
@@ -96,6 +107,18 @@ const RegisterServiceForm = () => {
     }
   
     toast.success('Servicio registrado exitosamente');
+    
+    // Limpiar el formulario
+    setServiceData({
+      clientId: '',
+      phone: '',
+      totalServices: 0,
+      serviceName: '',
+      price: '',
+      serviceDate: new Date().toISOString().split('T')[0],
+      bonificado: false,
+      bonificacion: '',
+    });
   };
   
 
