@@ -50,20 +50,14 @@ module.exports = (sequelize) => {
         type: DataTypes.DATE, // Almacena la fecha de expiración del token
         allowNull: true,
       },
-      deletedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        defaultValue: null,
-      },
+    
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
     },
-    {
-      paranoid: true,
-    }
+    
   );
 };
 

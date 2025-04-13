@@ -5,6 +5,7 @@ import {
   updateComercio,
   updateSubscription,
   createSubscription,
+  deleteComercio,
 } from "../Redux/Actions/actions";
 import { Link, useNavigate } from "react-router-dom";
 import { FiEdit, FiTrash, FiSave, FiPlus } from "react-icons/fi";
@@ -18,6 +19,8 @@ const ComerciosList = () => {
   const navigate = useNavigate();
   const [editingComercio, setEditingComercio] = useState(null);
   const [updatedData, setUpdatedData] = useState({});
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+const [comercioToDelete, setComercioToDelete] = useState(null);
   const [newSubscription, setNewSubscription] = useState({ startDate: "", endDate: "", active: false }); // Estado para nueva suscripción
   const comercios = useSelector((state) => state.comercios);
   const userInfo = useSelector((state) => state.userInfo);
@@ -39,6 +42,27 @@ const ComerciosList = () => {
       })),
     });
   };
+
+  const handleConfirmDelete = () => {
+    dispatch(deleteComercio(comercioToDelete))
+      .then(() => {
+        toast.success("Comercio eliminado con éxito");
+        dispatch(fetchComercios()); // Actualizar la lista de comercios
+      })
+      .catch(() => toast.error("Error al eliminar el comercio"))
+      .finally(() => {
+        setShowConfirmModal(false);
+        setComercioToDelete(null);
+      });
+  };
+  const confirmDelete = (comercioId) => {
+  setComercioToDelete(comercioId);
+  setShowConfirmModal(true);
+};
+const handleCancelDelete = () => {
+  setShowConfirmModal(false);
+  setComercioToDelete(null);
+};
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -317,15 +341,44 @@ const ComerciosList = () => {
                     <FiSave /> Guardar
                   </button>
                 ) : (
-                  <button onClick={() => handleEdit(comercio)} className=" bg-blue-500 text-white rounded-lg font-nunito hover:bg-blue-600 px-4 py-1">
-                    <FiEdit /> 
-                  </button>
+                  <>
+      <button onClick={() => handleEdit(comercio)} className="bg-blue-500 text-white rounded-lg font-nunito hover:bg-blue-600 px-4 py-1">
+        <FiEdit />
+      </button>
+      <button
+  onClick={() => confirmDelete(comercio.id)}
+  className="bg-red-500 text-white rounded-lg font-nunito hover:bg-red-600 px-4 py-1 ml-2"
+>
+  <FiTrash />
+</button>
+    </>
                 )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {showConfirmModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+      <h2 className="text-lg font-bold mb-4">¿Estás seguro de que deseas eliminar este comercio?</h2>
+      <div className="flex justify-end space-x-4">
+        <button
+          onClick={handleCancelDelete}
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+        >
+          Cancelar
+        </button>
+        <button
+          onClick={handleConfirmDelete}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };
