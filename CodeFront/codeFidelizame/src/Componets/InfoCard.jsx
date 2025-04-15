@@ -9,7 +9,7 @@ import fondo3 from '../assets/fondo3.png';
 import fondo4 from '../assets/fondo4.png';
 import defaulImage from '../assets/code.png';
 
-const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
+const InfoCard = ({ phone, totalServices, bonificado, bonificacion, onPdfDownloaded }) => {
     const userInfo = useSelector((state) => state.userInfo);
     const cardRef = useRef(null); // Ref para el componente de la tarjeta
     const [selectedFondo, setSelectedFondo] = useState(fondo1);
@@ -29,10 +29,16 @@ const InfoCard = ({ phone, totalServices, bonificado, bonificacion }) => {
             margin: [20, 20, 20, 20] 
         };
         // Generamos el PDF
-        html2pdf().from(element).set(options).save().then(() => {
-           
-            setSelectedFondo(fondo1); 
-        });
+        html2pdf()
+            .from(element)
+            .set(options)
+            .save()
+            .then(() => {
+                setSelectedFondo(fondo1);
+                if (onPdfDownloaded) {
+                    onPdfDownloaded(); // Notifica al componente padre que el PDF fue descargado
+                }
+            });
     };
 
     return (

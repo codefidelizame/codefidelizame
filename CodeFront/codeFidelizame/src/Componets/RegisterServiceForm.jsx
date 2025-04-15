@@ -15,9 +15,10 @@ const RegisterServiceForm = () => {
     serviceName: '',
     price: '',
     serviceDate: new Date().toISOString().split('T')[0],
-    bonificado: false, 
+    bonificado: false,
     bonificacion: ''
   });
+  const [pdfDownloaded, setPdfDownloaded] = useState(false); // Estado para controlar si el PDF fue descargado
 
   const dispatch = useDispatch();
   const clients = useSelector((state) => state.clients);
@@ -56,7 +57,7 @@ const RegisterServiceForm = () => {
       // No hacer nada si el número de teléfono tiene menos de 10 dígitos
       return;
     }
-  
+
     if (clients.length > 0) {
       const client = clients.find((c) => c.phone === serviceData.phone);
       if (client) {
@@ -84,31 +85,31 @@ const RegisterServiceForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Verificar si el cliente existe
+
+    if (!pdfDownloaded) {
+      toast.error('Debes descargar el PDF antes de registrar el servicio.');
+      return;
+    }
+
     if (!serviceData.clientId) {
       toast.error('El cliente no existe. Por favor, verifica el número de teléfono.');
-      return; // Detener el envío del formulario
+      return;
     }
-  
-    // Registrar el servicio y esperar a que la acción se complete
+
     await dispatch(registerService(serviceData));
-  
-    // Volver a solicitar la lista actualizada de clientes después de registrar el servicio
     await dispatch(fetchClients());
-  
+
     const client = clients.find((c) => c.id === serviceData.clientId);
     if (client) {
-      const updatedTotalServices = client.totalServices + 1; // Incrementar el total de servicios
+      const updatedTotalServices = client.totalServices + 1;
       setServiceData((prevData) => ({
         ...prevData,
         totalServices: updatedTotalServices,
       }));
     }
-  
+
     toast.success('Servicio registrado exitosamente');
-    
-    // Limpiar el formulario
+
     setServiceData({
       clientId: '',
       phone: '',
@@ -119,8 +120,9 @@ const RegisterServiceForm = () => {
       bonificado: false,
       bonificacion: '',
     });
+
+    setPdfDownloaded(false); // Reinicia el estado para la próxima vez
   };
-  
 
   const handleLogout = () => {
     navigate('/');
@@ -243,8 +245,13 @@ const RegisterServiceForm = () => {
         </div>
 
         <div className="flex justify-center ">
-          <InfoCard phone={serviceData.phone} totalServices={serviceData.totalServices} bonificado={serviceData.bonificado} 
-            bonificacion={serviceData.bonificacion}  />
+          <InfoCard
+            phone={serviceData.phone}
+            totalServices={serviceData.totalServices}
+            bonificado={serviceData.bonificado}
+            bonificacion={serviceData.bonificacion}
+            onPdfDownloaded={() => setPdfDownloaded(true)} // Actualiza el estado cuando se descargue el PDF
+          />
         </div>
       </div>
     </div>
