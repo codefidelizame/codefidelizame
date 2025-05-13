@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://codefidelizame.railway.internal';
+export const BASE_URL = 'https://codefidelizame-production.up.railway.app';
 
 
 const Config = {
