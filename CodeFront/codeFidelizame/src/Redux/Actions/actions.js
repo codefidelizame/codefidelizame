@@ -126,43 +126,39 @@ export const registerService = (serviceData) => async (dispatch) => {
   }
 };
 
-
 export const fetchClientServices = (clientId) => async (dispatch) => {
   try {
     dispatch({ type: FETCH_CLIENT_SERVICES_REQUEST });
 
-    // Obtener el token del localStorage
     const token = localStorage.getItem('token');
-
-    // Configurar los headers para incluir el token
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
 
-    // Llamada a la API
     const response = await axios.get(`${BASE_URL}/services/client/${clientId}`, config);
+    
+    // Extraer el array de servicios directamente. Asumimos que la respuesta tiene una propiedad 'services'.
+    const servicesArray = response.data.services || []; 
 
-    console.log('Response data from API:', response.data);
+    // Despachar solo el array de servicios para que el estado global clientServices sea el array.
+    dispatch({ type: FETCH_CLIENT_SERVICES_SUCCESS, payload: servicesArray });
+    
+    return servicesArray; // Devolver el array para uso directo en el componente si es necesario
 
-    // Si la respuesta está vacía (puede depender de cómo esté configurado el backend)
-    if (response.status === 404 || response.data.length === 0) {
-      dispatch({ type: FETCH_CLIENT_SERVICES_SUCCESS, payload: [] });
-    } else {
-      dispatch({ type: FETCH_CLIENT_SERVICES_SUCCESS, payload: response.data });
-    }
   } catch (error) {
+    const errorMessage = error.response ? error.response.data.message : error.message;
     if (error.response && error.response.status === 404) {
-      // Manejar 404 como un caso en el que no hay servicios en lugar de un error
-      dispatch({ type: FETCH_CLIENT_SERVICES_SUCCESS, payload: [] });
+      dispatch({ type: FETCH_CLIENT_SERVICES_SUCCESS, payload: [] }); // Tratar 404 como array vacío
+      return []; // Devolver array vacío
     } else {
-      console.log('Error fetching client services:', error.response ? error.response.data.message : error.message);
-
+      console.log('Error fetching client services:', errorMessage);
       dispatch({
         type: FETCH_CLIENT_SERVICES_FAILURE,
-        payload: error.response ? error.response.data.message : error.message,
+        payload: errorMessage,
       });
+      throw error; // Re-lanzar el error para que pueda ser capturado por .catch() en el componente
     }
   }
 };

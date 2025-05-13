@@ -132,27 +132,32 @@ const RegisterServiceForm = () => {
     return <p>Debes iniciar sesión para registrar un servicio.</p>;
   }
 
-  return (
-    <div className="flex flex-col min-h-screen bg-gray-400">
-      <div className="flex justify-between items-center bg-white shadow-md">
-        <nav className="w-full flex justify-start items-center py-4 px-8 bg-transparent">
+   return (
+    <div className="flex flex-col min-h-screen bg-gray-400 ">
+      <div className="flex justify-between items-center bg-white shadow-md p-4"> {/* Añadido p-4 para padding en el nav */}
+        <nav className="flex justify-start items-center bg-transparent"> {/* Simplificado, w-full no es necesario aquí */}
           <Link to="/" className="text-white text-xl font-bold cursor-pointer flex items-center">
-            <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 rounded-full" />
+            <img src={Logo} alt="Logo" className="h-12 w-12 md:h-14 md:w-14 mr-2 rounded-full" /> {/* Tamaño de logo responsivo */}
           </Link>
         </nav>
-        <Link to="/panel" className="text-gray-200 font-nunito bg-blue-500 py-2 px-4 rounded-lg mr-8">
-          PANEL
-        </Link>
-        <button onClick={handleLogout} className="text-gray-700 hover:text-red-500">
-          <FaSignOutAlt className="h-6 w-6" />
-        </button>
+        <div className="flex items-center space-x-4"> {/* Contenedor para Panel y Logout */}
+          <Link to="/panel" className="text-gray-200 font-nunito bg-blue-500 py-2 px-3 md:px-4 rounded-lg text-sm md:text-base"> {/* Padding y tamaño de texto responsivo */}
+            PANEL
+          </Link>
+          <button onClick={handleLogout} className="text-gray-700 hover:text-red-500">
+            <FaSignOutAlt className="h-5 w-5 md:h-6 md:w-6" /> {/* Tamaño de icono responsivo */}
+          </button>
+        </div>
       </div>
 
-      <div className="flex items-start justify-center flex-grow p-10 space-x-10 flex-wrap">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-          <h2 className="text-2xl font-bold mb-4 font-nunito">Registro de Compra</h2>
+      {/* Contenedor principal del formulario y la tarjeta */}
+      <div className="flex flex-col lg:flex-row items-center lg:items-start justify-center flex-grow p-4 md:p-6 lg:p-10 space-y-8 lg:space-y-0 lg:space-x-10">
+        {/* Formulario */}
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mt-4 lg:mt-0"> {/* w-full max-w-md para responsividad */}
+          <h2 className="text-2xl font-bold mb-4 font-nunito text-center md:text-left">Registro de Compra</h2>
           {error && <div className="text-red-500 mb-4">{error}</div>}
           <form onSubmit={handleSubmit}>
+            {/* ... campos del formulario sin cambios ... */}
             <div className="mb-4">
               <input
                 type="text"
@@ -170,7 +175,7 @@ const RegisterServiceForm = () => {
                 name="clientId"
                 value={serviceData.clientId}
                 placeholder="ID del Cliente (auto-llenado)"
-                className="border border-gray-300 rounded-lg p-2 w-full"
+                className="border border-gray-300 rounded-lg p-2 w-full bg-gray-100" // Añadido bg-gray-100 para indicar disabled
                 disabled
               />
             </div>
@@ -213,7 +218,7 @@ const RegisterServiceForm = () => {
                   name="bonificado"
                   checked={serviceData.bonificado}
                   onChange={(e) => setServiceData({ ...serviceData, bonificado: e.target.checked })}
-                  className="mr-2"
+                  className="mr-2 h-5 w-5" // Tamaño del checkbox
                 />
                 Bonificado
               </label>
@@ -227,7 +232,7 @@ const RegisterServiceForm = () => {
                   id="bonificacion"
                   name="bonificacion"
                   rows="3"
-                  className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                  className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2" // Añadido p-2
                   placeholder="Describe la bonificación que se otorga"
                   value={serviceData.bonificacion}
                   onChange={(e) => setServiceData({ ...serviceData, bonificacion: e.target.value })}
@@ -236,26 +241,29 @@ const RegisterServiceForm = () => {
             )}
             <button
               type="submit"
-              className={`w-full py-2 bg-blue-500 text-white rounded-lg font-nunito hover:bg-blue-600 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={loading}
+              className={`w-full py-2.5 bg-blue-500 text-white rounded-lg font-nunito hover:bg-blue-600 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`} // Ajustado py
+              disabled={loading || !pdfDownloaded} // Deshabilitar si el PDF no se ha descargado
             >
               {loading ? 'Cargando...' : 'Registrar Compra'}
             </button>
+             {!pdfDownloaded && (
+              <p className="text-red-500 text-xs mt-2 text-center">Descarga la tarjeta antes de registrar.</p>
+            )}
           </form>
         </div>
 
-        <div className="flex justify-center ">
+        {/* InfoCard */}
+        <div className="flex justify-center w-full lg:w-auto"> {/* w-full en móvil, auto en lg */}
           <InfoCard
             phone={serviceData.phone}
             totalServices={serviceData.totalServices}
             bonificado={serviceData.bonificado}
             bonificacion={serviceData.bonificacion}
-            onPdfDownloaded={() => setPdfDownloaded(true)} // Actualiza el estado cuando se descargue el PDF
+            onPdfDownloaded={() => setPdfDownloaded(true)}
           />
         </div>
       </div>
     </div>
   );
 };
-
 export default RegisterServiceForm;
